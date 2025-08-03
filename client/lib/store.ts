@@ -41,8 +41,9 @@ interface AppState {
 const createMockImages = (): ImageData[] => [
   {
     id: '1',
-    name: 'forced_feminization_001.jpg',
-    url: 'https://images.unsplash.com/photo-1494790108755-2616c5e2e3f8?w=300&h=400&fit=crop',
+    name: 'Birth of a son ,, dressed as a girl ,, being pretty ,, gang of girls.jpg',
+    title: 'Birth of a son',
+    url: 'https://images.unsplash.com/photo-1494790108755-2616c5e2e3f8?w=400&h=300&fit=crop',
     folder: 'training',
     size: 1200000,
     type: 'image/jpeg',
@@ -51,9 +52,10 @@ const createMockImages = (): ImageData[] => [
     rawTags: []
   },
   {
-    id: '2', 
-    name: 'crossdressing_makeup_tutorial.png',
-    url: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=300&h=400&fit=crop',
+    id: '2',
+    name: 'Makeup transformation ,, crossdressing tutorial ,, feminine look.png',
+    title: 'Makeup transformation',
+    url: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=400&h=300&fit=crop',
     folder: 'tutorials',
     size: 890000,
     type: 'image/png',
@@ -63,8 +65,9 @@ const createMockImages = (): ImageData[] => [
   },
   {
     id: '3',
-    name: 'latex_dress_collection.jpg',
-    url: 'https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?w=300&h=400&fit=crop',
+    name: 'Fashion collection ,, latex dress ,, elegant outfit ,, party wear.jpg',
+    title: 'Fashion collection',
+    url: 'https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?w=400&h=300&fit=crop',
     folder: 'outfits',
     size: 1500000,
     type: 'image/jpeg',
@@ -74,8 +77,9 @@ const createMockImages = (): ImageData[] => [
   },
   {
     id: '4',
-    name: 'sissy_training_hypno.webp',
-    url: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=300&h=400&fit=crop',
+    name: 'Training session ,, sissy hypno ,, mind control.webp',
+    title: 'Training session',
+    url: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=400&h=300&fit=crop',
     folder: 'training',
     size: 750000,
     type: 'image/webp',
@@ -85,8 +89,9 @@ const createMockImages = (): ImageData[] => [
   },
   {
     id: '5',
-    name: 'feminzation_complete_guide.jpg',
-    url: 'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=300&h=400&fit=crop',
+    name: 'Complete guide ,, feminization steps ,, transformation journey.jpg',
+    title: 'Complete guide',
+    url: 'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=400&h=300&fit=crop',
     folder: 'guides',
     size: 980000,
     type: 'image/jpeg',
@@ -96,8 +101,9 @@ const createMockImages = (): ImageData[] => [
   },
   {
     id: '6',
-    name: 'dominant_mistress_roleplay.png',
-    url: 'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=300&h=400&fit=crop',
+    name: 'Roleplay scenario ,, dominant mistress ,, submissive training.png',
+    title: 'Roleplay scenario',
+    url: 'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=400&h=300&fit=crop',
     folder: 'roleplay',
     size: 1100000,
     type: 'image/png',
@@ -130,11 +136,12 @@ export const useAppStore = create<AppState>()((set, get) => ({
       // Actions
       addImages: (files: File[]) => {
         const newImages: ImageData[] = files.map((file, index) => {
-          const { rawTags, processedTags } = processImageTags(file.name);
-          
+          const { title, rawTags, processedTags } = processImageTags(file.name);
+
           return {
             id: Date.now().toString() + index,
             name: file.name,
+            title,
             url: URL.createObjectURL(file),
             size: file.size,
             type: file.type,
@@ -258,6 +265,7 @@ export const useAppStore = create<AppState>()((set, get) => ({
           const query = state.searchQuery.toLowerCase();
           filtered = filtered.filter(img =>
             img.name.toLowerCase().includes(query) ||
+            img.title.toLowerCase().includes(query) ||
             img.tags.some(tag => tag.toLowerCase().includes(query)) ||
             img.rawTags.some(tag => tag.toLowerCase().includes(query)) ||
             (img.folder && state.folders.find(f => f.id === img.folder)?.name.toLowerCase().includes(query))
@@ -314,10 +322,10 @@ export function initializeMockData() {
     
     // Process tags for mock images
     const processedImages = mockImages.map(img => {
-      const { rawTags, processedTags } = processImageTags(img.name, 
+      const { title, rawTags, processedTags } = processImageTags(img.name,
         mockFolders.find(f => f.id === img.folder)?.name
       );
-      return { ...img, rawTags, tags: processedTags };
+      return { ...img, title, rawTags, tags: processedTags };
     });
     
     useAppStore.setState({
