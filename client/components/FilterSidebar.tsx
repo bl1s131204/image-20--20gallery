@@ -1,5 +1,5 @@
-import React from 'react';
-import { X, Hash, Folder, Calendar, FileType, HardDrive } from 'lucide-react';
+import React, { useState } from 'react';
+import { X, Hash, Folder, Calendar, FileType, HardDrive, Info, Eye, Search } from 'lucide-react';
 import { useAppStore } from '@/lib/store';
 import { useTheme } from './ThemeProvider';
 import { Button } from './ui/button';
@@ -8,6 +8,18 @@ import { Checkbox } from './ui/checkbox';
 import { Separator } from './ui/separator';
 import { ScrollArea } from './ui/scroll-area';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
+import { Input } from './ui/input';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from './ui/tooltip';
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from './ui/collapsible';
 
 export function FilterSidebar() {
   const { theme } = useTheme();
@@ -22,6 +34,10 @@ export function FilterSidebar() {
     setSelectedFolder,
     images
   } = useAppStore();
+
+  const [showDebugView, setShowDebugView] = useState(false);
+  const [tagSearchQuery, setTagSearchQuery] = useState('');
+  const [expandedTags, setExpandedTags] = useState<Set<string>>(new Set());
 
   if (!showFilters) return null;
 
@@ -112,52 +128,151 @@ export function FilterSidebar() {
               <div className="flex items-center justify-between">
                 <h3 className="font-medium text-sm flex items-center gap-2">
                   <Hash className="h-4 w-4" />
-                  Tags
+                  Smart Tags
                 </h3>
-                {selectedTags.length > 0 && (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => selectedTags.forEach(tag => toggleTag(tag))}
-                    className="h-6 px-2 text-xs"
-                  >
-                    Clear
-                  </Button>
-                )}
-              </div>
-              
-              <div className="space-y-2 max-h-60 overflow-y-auto">
-                {tagVariants.slice(0, 50).map(tagVariant => (
-                  <label 
-                    key={tagVariant.canonical} 
-                    className="flex items-center space-x-2 cursor-pointer group"
-                  >
-                    <Checkbox
-                      checked={selectedTags.includes(tagVariant.canonical)}
-                      onCheckedChange={() => toggleTag(tagVariant.canonical)}
-                    />
-                    <span className={`text-sm group-hover:text-primary transition-colors truncate ${
-                      theme === 'cyberpunk' && selectedTags.includes(tagVariant.canonical) 
-                        ? 'text-cyberpunk-pink' 
-                        : ''
-                    }`}>
-                      {tagVariant.canonical}
-                    </span>
-                    <Badge 
-                      variant="outline" 
-                      className={`ml-auto ${
-                        theme === 'neon' && selectedTags.includes(tagVariant.canonical)
-                          ? 'border-neon text-neon'
-                          : ''
-                      }`}
+                <div className="flex items-center gap-1">
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setShowDebugView(!showDebugView)}
+                          className="h-6 w-6 p-0"
+                        >
+                          <Info className="h-3 w-3" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Show tag details and aliases</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                  {selectedTags.length > 0 && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => selectedTags.forEach(tag => toggleTag(tag))}
+                      className="h-6 px-2 text-xs"
                     >
-                      {tagVariant.count}
-                    </Badge>
-                  </label>
-                ))}
+                      Clear
+                    </Button>
+                  )}
+                </div>
+              </div>
+
+              {/* Tag Search */}
+              <div className="relative">
+                <Search className="absolute left-2 top-1/2 h-3 w-3 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  placeholder="Search tags..."
+                  value={tagSearchQuery}
+                  onChange={(e) => setTagSearchQuery(e.target.value)}
+                  className="pl-7 h-8 text-xs"
+                />
+              </div>
+
+              <div className="space-y-2 max-h-80 overflow-y-auto">
+                {tagVariants
+                  .filter(tagVariant =>
+                    !tagSearchQuery ||
+                    tagVariant.canonical.toLowerCase().includes(tagSearchQuery.toLowerCase()) ||
+                    tagVariant.aliases.some(alias =>
+                      alias.toLowerCase().includes(tagSearchQuery.toLowerCase())
+                    )
+                  )
+                  .slice(0, 50)
+                  .map(tagVariant => {
+                    const isExpanded = expandedTags.has(tagVariant.canonical);
+                    const hasAliases = tagVariant.aliases.length > 0;
+
+                    return (
+                      <div key={tagVariant.canonical} className="space-y-1">
+                        <div className="flex items-center space-x-2 cursor-pointer group">
+                          <Checkbox
+                            checked={selectedTags.includes(tagVariant.canonical)}
+                            onCheckedChange={() => toggleTag(tagVariant.canonical)}
+                          />
+                          <span className={`text-sm group-hover:text-primary transition-colors truncate flex-1 ${
+                            theme === 'cyberpunk' && selectedTags.includes(tagVariant.canonical)
+                              ? 'text-cyberpunk-pink'
+                              : ''
+                          }`}>
+                            {tagVariant.canonical}
+                          </span>
+
+                          <div className="flex items-center gap-1">
+                            {/* Confidence indicator */}
+                            <div className={`w-2 h-2 rounded-full ${
+                              tagVariant.confidence >= 0.9 ? 'bg-green-500' :
+                              tagVariant.confidence >= 0.7 ? 'bg-yellow-500' :
+                              'bg-red-500'
+                            }`} title={`Confidence: ${(tagVariant.confidence * 100).toFixed(0)}%`} />
+
+                            <Badge
+                              variant="outline"
+                              className={`text-xs ${
+                                theme === 'neon' && selectedTags.includes(tagVariant.canonical)
+                                  ? 'border-neon text-neon'
+                                  : ''
+                              }`}
+                            >
+                              {tagVariant.count}
+                            </Badge>
+
+                            {hasAliases && showDebugView && (
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => {
+                                  const newExpanded = new Set(expandedTags);
+                                  if (isExpanded) {
+                                    newExpanded.delete(tagVariant.canonical);
+                                  } else {
+                                    newExpanded.add(tagVariant.canonical);
+                                  }
+                                  setExpandedTags(newExpanded);
+                                }}
+                                className="h-4 w-4 p-0"
+                              >
+                                <Eye className="h-3 w-3" />
+                              </Button>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Show aliases in debug mode */}
+                        {hasAliases && showDebugView && isExpanded && (
+                          <div className="ml-6 space-y-1">
+                            <div className="text-xs text-muted-foreground font-medium">Aliases:</div>
+                            {tagVariant.aliases.map(alias => (
+                              <div key={alias} className="text-xs text-muted-foreground ml-2">
+                                • {alias}
+                              </div>
+                            ))}
+                            <div className="text-xs text-muted-foreground">
+                              Sources: {tagVariant.sources.map(s => s.type).join(', ')}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+
                 {tagVariants.length > 50 && (
                   <div className="text-xs text-muted-foreground text-center py-2">
                     ... and {tagVariants.length - 50} more tags
+                  </div>
+                )}
+
+                {tagSearchQuery && tagVariants.filter(tagVariant =>
+                  tagVariant.canonical.toLowerCase().includes(tagSearchQuery.toLowerCase()) ||
+                  tagVariant.aliases.some(alias =>
+                    alias.toLowerCase().includes(tagSearchQuery.toLowerCase())
+                  )
+                ).length === 0 && (
+                  <div className="text-xs text-muted-foreground text-center py-4">
+                    No tags found matching "{tagSearchQuery}"
                   </div>
                 )}
               </div>
