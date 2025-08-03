@@ -7,4 +7,311 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import {\n  Dialog,\n  DialogContent,\n  DialogHeader,\n  DialogTitle,\n} from '@/components/ui/dialog';\nimport {\n  AlertDialog,\n  AlertDialogAction,\n  AlertDialogCancel,\n  AlertDialogContent,\n  AlertDialogDescription,\n  AlertDialogFooter,\n  AlertDialogHeader,\n  AlertDialogTitle,\n} from '@/components/ui/alert-dialog';\n\nexport default function FolderSelection() {\n  const { theme } = useTheme();\n  const { folders, images, createFolder, deleteFolder, renameFolder } = useAppStore();\n  const [selectedFolders, setSelectedFolders] = useState<string[]>([]);\n  const [showCreateDialog, setShowCreateDialog] = useState(false);\n  const [showRenameDialog, setShowRenameDialog] = useState(false);\n  const [showDeleteDialog, setShowDeleteDialog] = useState(false);\n  const [newFolderName, setNewFolderName] = useState('');\n  const [renamingFolder, setRenamingFolder] = useState<string | null>(null);\n  const [deletingFolder, setDeletingFolder] = useState<string | null>(null);\n\n  const toggleFolderSelection = (folderId: string) => {\n    setSelectedFolders(prev => \n      prev.includes(folderId) \n        ? prev.filter(id => id !== folderId)\n        : [...prev, folderId]\n    );\n  };\n\n  const handleCreateFolder = () => {\n    if (newFolderName.trim()) {\n      createFolder(newFolderName.trim());\n      setNewFolderName('');\n      setShowCreateDialog(false);\n    }\n  };\n\n  const handleRenameFolder = () => {\n    if (newFolderName.trim() && renamingFolder) {\n      renameFolder(renamingFolder, newFolderName.trim());\n      setNewFolderName('');\n      setRenamingFolder(null);\n      setShowRenameDialog(false);\n    }\n  };\n\n  const handleDeleteFolder = () => {\n    if (deletingFolder) {\n      deleteFolder(deletingFolder);\n      setSelectedFolders(prev => prev.filter(id => id !== deletingFolder));\n      setDeletingFolder(null);\n      setShowDeleteDialog(false);\n    }\n  };\n\n  const getFolderPreviewImages = (folderId: string) => {\n    const folderImages = images.filter(img => img.folder === folderId);\n    return folderImages.slice(0, 4);\n  };\n\n  return (\n    <div className=\"min-h-screen bg-background\">\n      {/* Fixed Header */}\n      <div className=\"sticky top-0 z-50 bg-background/95 backdrop-blur border-b\">\n        <div className=\"container mx-auto px-4 py-4\">\n          <div className=\"flex items-center justify-between\">\n            <div className=\"flex items-center gap-4\">\n              <Link to=\"/\">\n                <Button variant=\"ghost\" size=\"sm\">\n                  <ArrowLeft className=\"h-4 w-4 mr-2\" />\n                  Back to Gallery\n                </Button>\n              </Link>\n              <h1 className=\"text-2xl font-bold\">Select Folders</h1>\n            </div>\n            \n            <div className=\"flex items-center gap-2\">\n              <Button \n                variant=\"outline\" \n                size=\"sm\"\n                onClick={() => setShowCreateDialog(true)}\n              >\n                <Plus className=\"h-4 w-4 mr-2\" />\n                New Folder\n              </Button>\n              \n              {selectedFolders.length > 0 && (\n                <Button size=\"sm\">\n                  <Check className=\"h-4 w-4 mr-2\" />\n                  Select {selectedFolders.length} Folder{selectedFolders.length > 1 ? 's' : ''}\n                </Button>\n              )}\n            </div>\n          </div>\n        </div>\n      </div>\n\n      {/* Folder Grid */}\n      <div className=\"container mx-auto px-4 py-8\">\n        <div className=\"grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6\">\n          {folders.map(folder => {\n            const previewImages = getFolderPreviewImages(folder.id);\n            const isSelected = selectedFolders.includes(folder.id);\n            \n            return (\n              <Card \n                key={folder.id}\n                className={`group relative cursor-pointer transition-all duration-300 hover:shadow-lg ${\n                  isSelected ? 'ring-2 ring-primary' : ''\n                } ${\n                  theme === 'neon' && isSelected ? 'shadow-glow' : ''\n                } ${\n                  theme === 'cyberpunk' ? 'border-cyberpunk-pink/30 hover:border-cyberpunk-blue' : ''\n                }`}\n                onClick={() => toggleFolderSelection(folder.id)}\n              >\n                <CardContent className=\"p-4\">\n                  {/* Preview Images */}\n                  <div className=\"aspect-square mb-4 relative overflow-hidden rounded-lg bg-muted\">\n                    {previewImages.length > 0 ? (\n                      <div className=\"grid grid-cols-2 gap-1 h-full\">\n                        {previewImages.map((img, index) => (\n                          <div key={img.id} className=\"relative overflow-hidden rounded\">\n                            <img\n                              src={img.url}\n                              alt={img.name}\n                              className=\"w-full h-full object-cover\"\n                            />\n                          </div>\n                        ))}\n                        {/* Fill empty slots */}\n                        {Array.from({ length: 4 - previewImages.length }).map((_, index) => (\n                          <div key={`empty-${index}`} className=\"bg-muted/50 rounded\" />\n                        ))}\n                      </div>\n                    ) : (\n                      <div className=\"flex items-center justify-center h-full\">\n                        <div className=\"text-6xl opacity-50\">📁</div>\n                      </div>\n                    )}\n                    \n                    {/* Selection Indicator */}\n                    {isSelected && (\n                      <div className=\"absolute inset-0 bg-primary/20 flex items-center justify-center\">\n                        <div className=\"bg-primary text-primary-foreground rounded-full p-2\">\n                          <Check className=\"h-6 w-6\" />\n                        </div>\n                      </div>\n                    )}\n                  </div>\n                  \n                  {/* Folder Info */}\n                  <div className=\"space-y-2\">\n                    <div className=\"flex items-center justify-between\">\n                      <h3 className=\"font-semibold truncate group-hover:text-primary transition-colors\">\n                        {folder.name}\n                      </h3>\n                      <Badge variant=\"secondary\">\n                        {folder.images.length}\n                      </Badge>\n                    </div>\n                    \n                    {/* Actions */}\n                    <div className=\"flex items-center justify-between opacity-0 group-hover:opacity-100 transition-opacity\">\n                      <div className=\"flex gap-1\">\n                        <Button\n                          variant=\"ghost\"\n                          size=\"sm\"\n                          className=\"h-8 w-8 p-0\"\n                          onClick={(e) => {\n                            e.stopPropagation();\n                            setRenamingFolder(folder.id);\n                            setNewFolderName(folder.name);\n                            setShowRenameDialog(true);\n                          }}\n                        >\n                          <Edit className=\"h-4 w-4\" />\n                        </Button>\n                        \n                        <Button\n                          variant=\"ghost\"\n                          size=\"sm\"\n                          className=\"h-8 w-8 p-0 text-destructive\"\n                          onClick={(e) => {\n                            e.stopPropagation();\n                            setDeletingFolder(folder.id);\n                            setShowDeleteDialog(true);\n                          }}\n                        >\n                          <Trash2 className=\"h-4 w-4\" />\n                        </Button>\n                      </div>\n                      \n                      <Button\n                        variant=\"ghost\"\n                        size=\"sm\"\n                        className=\"h-8 w-8 p-0\"\n                        onClick={(e) => {\n                          e.stopPropagation();\n                          // TODO: Implement favorite functionality\n                        }}\n                      >\n                        <Heart className=\"h-4 w-4\" />\n                      </Button>\n                    </div>\n                  </div>\n                </CardContent>\n              </Card>\n            );\n          })}\n        </div>\n        \n        {folders.length === 0 && (\n          <div className=\"text-center py-12\">\n            <div className=\"text-6xl mb-4 opacity-50\">📁</div>\n            <h3 className=\"text-lg font-semibold mb-2\">No folders yet</h3>\n            <p className=\"text-muted-foreground mb-4\">\n              Create your first folder to organize your images\n            </p>\n            <Button onClick={() => setShowCreateDialog(true)}>\n              <Plus className=\"h-4 w-4 mr-2\" />\n              Create Folder\n            </Button>\n          </div>\n        )}\n      </div>\n\n      {/* Create Folder Dialog */}\n      <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>\n        <DialogContent>\n          <DialogHeader>\n            <DialogTitle>Create New Folder</DialogTitle>\n          </DialogHeader>\n          <div className=\"space-y-4\">\n            <Input\n              placeholder=\"Folder name\"\n              value={newFolderName}\n              onChange={(e) => setNewFolderName(e.target.value)}\n              onKeyDown={(e) => e.key === 'Enter' && handleCreateFolder()}\n            />\n            <div className=\"flex justify-end gap-2\">\n              <Button variant=\"outline\" onClick={() => setShowCreateDialog(false)}>\n                Cancel\n              </Button>\n              <Button onClick={handleCreateFolder} disabled={!newFolderName.trim()}>\n                Create\n              </Button>\n            </div>\n          </div>\n        </DialogContent>\n      </Dialog>\n\n      {/* Rename Folder Dialog */}\n      <Dialog open={showRenameDialog} onOpenChange={setShowRenameDialog}>\n        <DialogContent>\n          <DialogHeader>\n            <DialogTitle>Rename Folder</DialogTitle>\n          </DialogHeader>\n          <div className=\"space-y-4\">\n            <Input\n              placeholder=\"New folder name\"\n              value={newFolderName}\n              onChange={(e) => setNewFolderName(e.target.value)}\n              onKeyDown={(e) => e.key === 'Enter' && handleRenameFolder()}\n            />\n            <div className=\"flex justify-end gap-2\">\n              <Button variant=\"outline\" onClick={() => setShowRenameDialog(false)}>\n                Cancel\n              </Button>\n              <Button onClick={handleRenameFolder} disabled={!newFolderName.trim()}>\n                Rename\n              </Button>\n            </div>\n          </div>\n        </DialogContent>\n      </Dialog>\n\n      {/* Delete Folder Dialog */}\n      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>\n        <AlertDialogContent>\n          <AlertDialogHeader>\n            <AlertDialogTitle>Delete Folder</AlertDialogTitle>\n            <AlertDialogDescription>\n              Are you sure you want to delete this folder? This action cannot be undone.\n              Images in this folder will not be deleted, but they will be moved to \"Uncategorized\".\n            </AlertDialogDescription>\n          </AlertDialogHeader>\n          <AlertDialogFooter>\n            <AlertDialogCancel>Cancel</AlertDialogCancel>\n            <AlertDialogAction \n              onClick={handleDeleteFolder}\n              className=\"bg-destructive text-destructive-foreground hover:bg-destructive/90\"\n            >\n              Delete\n            </AlertDialogAction>\n          </AlertDialogFooter>\n        </AlertDialogContent>\n      </AlertDialog>\n    </div>\n  );\n}","old_str":""}]
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+
+export default function FolderSelection() {
+  const { theme } = useTheme();
+  const { folders, images, createFolder, deleteFolder, renameFolder } = useAppStore();
+  const [selectedFolders, setSelectedFolders] = useState<string[]>([]);
+  const [showCreateDialog, setShowCreateDialog] = useState(false);
+  const [showRenameDialog, setShowRenameDialog] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [newFolderName, setNewFolderName] = useState('');
+  const [renamingFolder, setRenamingFolder] = useState<string | null>(null);
+  const [deletingFolder, setDeletingFolder] = useState<string | null>(null);
+
+  const toggleFolderSelection = (folderId: string) => {
+    setSelectedFolders(prev => 
+      prev.includes(folderId) 
+        ? prev.filter(id => id !== folderId)
+        : [...prev, folderId]
+    );
+  };
+
+  const handleCreateFolder = () => {
+    if (newFolderName.trim()) {
+      createFolder(newFolderName.trim());
+      setNewFolderName('');
+      setShowCreateDialog(false);
+    }
+  };
+
+  const handleRenameFolder = () => {
+    if (newFolderName.trim() && renamingFolder) {
+      renameFolder(renamingFolder, newFolderName.trim());
+      setNewFolderName('');
+      setRenamingFolder(null);
+      setShowRenameDialog(false);
+    }
+  };
+
+  const handleDeleteFolder = () => {
+    if (deletingFolder) {
+      deleteFolder(deletingFolder);
+      setSelectedFolders(prev => prev.filter(id => id !== deletingFolder));
+      setDeletingFolder(null);
+      setShowDeleteDialog(false);
+    }
+  };
+
+  const getFolderPreviewImages = (folderId: string) => {
+    const folderImages = images.filter(img => img.folder === folderId);
+    return folderImages.slice(0, 4);
+  };
+
+  return (
+    <div className="min-h-screen bg-background">
+      {/* Fixed Header */}
+      <div className="sticky top-0 z-50 bg-background/95 backdrop-blur border-b">
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <Link to="/">
+                <Button variant="ghost" size="sm">
+                  <ArrowLeft className="h-4 w-4 mr-2" />
+                  Back to Gallery
+                </Button>
+              </Link>
+              <h1 className="text-2xl font-bold">Select Folders</h1>
+            </div>
+            
+            <div className="flex items-center gap-2">
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => setShowCreateDialog(true)}
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                New Folder
+              </Button>
+              
+              {selectedFolders.length > 0 && (
+                <Button size="sm">
+                  <Check className="h-4 w-4 mr-2" />
+                  Select {selectedFolders.length} Folder{selectedFolders.length > 1 ? 's' : ''}
+                </Button>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Folder Grid */}
+      <div className="container mx-auto px-4 py-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {folders.map(folder => {
+            const previewImages = getFolderPreviewImages(folder.id);
+            const isSelected = selectedFolders.includes(folder.id);
+            
+            return (
+              <Card 
+                key={folder.id}
+                className={`group relative cursor-pointer transition-all duration-300 hover:shadow-lg ${
+                  isSelected ? 'ring-2 ring-primary' : ''
+                } ${
+                  theme === 'neon' && isSelected ? 'shadow-glow' : ''
+                } ${
+                  theme === 'cyberpunk' ? 'border-cyberpunk-pink/30 hover:border-cyberpunk-blue' : ''
+                }`}
+                onClick={() => toggleFolderSelection(folder.id)}
+              >
+                <CardContent className="p-4">
+                  {/* Preview Images */}
+                  <div className="aspect-square mb-4 relative overflow-hidden rounded-lg bg-muted">
+                    {previewImages.length > 0 ? (
+                      <div className="grid grid-cols-2 gap-1 h-full">
+                        {previewImages.map((img) => (
+                          <div key={img.id} className="relative overflow-hidden rounded">
+                            <img
+                              src={img.url}
+                              alt={img.name}
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                        ))}
+                        {/* Fill empty slots */}
+                        {Array.from({ length: 4 - previewImages.length }).map((_, index) => (
+                          <div key={`empty-${index}`} className="bg-muted/50 rounded" />
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="flex items-center justify-center h-full">
+                        <div className="text-6xl opacity-50">📁</div>
+                      </div>
+                    )}
+                    
+                    {/* Selection Indicator */}
+                    {isSelected && (
+                      <div className="absolute inset-0 bg-primary/20 flex items-center justify-center">
+                        <div className="bg-primary text-primary-foreground rounded-full p-2">
+                          <Check className="h-6 w-6" />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                  
+                  {/* Folder Info */}
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <h3 className="font-semibold truncate group-hover:text-primary transition-colors">
+                        {folder.name}
+                      </h3>
+                      <Badge variant="secondary">
+                        {folder.images.length}
+                      </Badge>
+                    </div>
+                    
+                    {/* Actions */}
+                    <div className="flex items-center justify-between opacity-0 group-hover:opacity-100 transition-opacity">
+                      <div className="flex gap-1">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 w-8 p-0"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setRenamingFolder(folder.id);
+                            setNewFolderName(folder.name);
+                            setShowRenameDialog(true);
+                          }}
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 w-8 p-0 text-destructive"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setDeletingFolder(folder.id);
+                            setShowDeleteDialog(true);
+                          }}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                      
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-8 w-8 p-0"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          // TODO: Implement favorite functionality
+                        }}
+                      >
+                        <Heart className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
+        
+        {folders.length === 0 && (
+          <div className="text-center py-12">
+            <div className="text-6xl mb-4 opacity-50">📁</div>
+            <h3 className="text-lg font-semibold mb-2">No folders yet</h3>
+            <p className="text-muted-foreground mb-4">
+              Create your first folder to organize your images
+            </p>
+            <Button onClick={() => setShowCreateDialog(true)}>
+              <Plus className="h-4 w-4 mr-2" />
+              Create Folder
+            </Button>
+          </div>
+        )}
+      </div>
+
+      {/* Create Folder Dialog */}
+      <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Create New Folder</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <Input
+              placeholder="Folder name"
+              value={newFolderName}
+              onChange={(e) => setNewFolderName(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handleCreateFolder()}
+            />
+            <div className="flex justify-end gap-2">
+              <Button variant="outline" onClick={() => setShowCreateDialog(false)}>
+                Cancel
+              </Button>
+              <Button onClick={handleCreateFolder} disabled={!newFolderName.trim()}>
+                Create
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Rename Folder Dialog */}
+      <Dialog open={showRenameDialog} onOpenChange={setShowRenameDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Rename Folder</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <Input
+              placeholder="New folder name"
+              value={newFolderName}
+              onChange={(e) => setNewFolderName(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handleRenameFolder()}
+            />
+            <div className="flex justify-end gap-2">
+              <Button variant="outline" onClick={() => setShowRenameDialog(false)}>
+                Cancel
+              </Button>
+              <Button onClick={handleRenameFolder} disabled={!newFolderName.trim()}>
+                Rename
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Folder Dialog */}
+      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Folder</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete this folder? This action cannot be undone.
+              Images in this folder will not be deleted, but they will be moved to "Uncategorized".
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={handleDeleteFolder}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </div>
+  );
+}
