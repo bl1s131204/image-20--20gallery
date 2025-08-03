@@ -22,6 +22,7 @@ import {
   updateFolderName,
   validateFolderAccess,
   isFileSystemAccessSupported,
+  getFileSystemAccessError,
   initializeDatabase,
   getFolderStats
 } from '@/lib/localFolderManager';
@@ -103,8 +104,8 @@ export function LinkedFolders() {
   const handleLinkFolder = async () => {
     if (!isFileSystemAccessSupported()) {
       toast({
-        title: "Not Supported",
-        description: "File System Access API is not supported in this browser. Please use Chrome, Edge, or another Chromium-based browser.",
+        title: "Cannot Link Folder",
+        description: getFileSystemAccessError(),
         variant: "destructive"
       });
       return;
@@ -473,9 +474,9 @@ export function LinkedFolders() {
             <div className="flex items-start gap-2">
               <AlertTriangle className="h-4 w-4 text-yellow-600 dark:text-yellow-400 mt-0.5" />
               <div className="text-sm text-yellow-800 dark:text-yellow-200">
-                <p className="font-medium mb-1">Browser Not Supported</p>
+                <p className="font-medium mb-1">Local Folder Linking Unavailable</p>
                 <p className="text-xs">
-                  Local folder linking requires Chrome, Edge, or another Chromium-based browser with File System Access API support.
+                  {getFileSystemAccessError()}
                 </p>
               </div>
             </div>
