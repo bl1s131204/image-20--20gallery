@@ -9,6 +9,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "./components/ThemeProvider";
 import { Header } from "./components/Header";
 import { FilterSidebar } from "./components/FilterSidebar";
+import { TagsSidebar } from "./components/TagsSidebar";
 import { ImageGrid } from "./components/ImageGrid";
 import { initializeMockData } from "./lib/store";
 import { useEffect } from "react";
@@ -27,6 +28,7 @@ function AppContent() {
     <div className="min-h-screen bg-background text-foreground">
       <Header />
       <main className="relative flex">
+        <TagsSidebar />
         <div className="flex-1 min-h-[calc(100vh-4rem)]">
           <ImageGrid />
         </div>
