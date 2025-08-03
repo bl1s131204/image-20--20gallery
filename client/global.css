@@ -171,3 +171,25 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer utilities {
+  .animate-reflow {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .backdrop-blur-sm {
+    backdrop-filter: blur(4px);
+  }
+
+  .backdrop-blur {
+    backdrop-filter: blur(8px);
+  }
+
+  .theme-neon .border {
+    box-shadow: 0 0 5px currentColor;
+  }
+
+  .theme-cyberpunk .border {
+    border-image: linear-gradient(45deg, hsl(var(--cyberpunk-pink)), hsl(var(--cyberpunk-blue))) 1;
+  }
+}
