@@ -1,5 +1,5 @@
-import React, { useState, useRef } from 'react';
-import { MoreVertical, Download, Trash2, FolderPlus, Eye, Heart, Brain } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import { MoreVertical, Download, Trash2, FolderPlus, Eye, Heart, Brain, X, Maximize, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useAppStore } from '@/lib/store';
 import { useTheme } from './ThemeProvider';
 import { ImageData } from '@/lib/tagEngine';
@@ -25,9 +25,10 @@ import {
 interface ImageCardProps {
   image: ImageData;
   onView: (image: ImageData) => void;
+  onFullscreen: (image: ImageData) => void;
 }
 
-function ImageCard({ image, onView }: ImageCardProps) {
+function ImageCard({ image, onView, onFullscreen }: ImageCardProps) {
   const { theme } = useTheme();
   const { removeImage, folders, addImageToFolder } = useAppStore();
   const [isHovered, setIsHovered] = useState(false);
@@ -51,7 +52,13 @@ function ImageCard({ image, onView }: ImageCardProps) {
       }`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      onClick={() => onView(image)}
+      onClick={(e) => {
+        if (e.shiftKey || e.ctrlKey || e.metaKey) {
+          onFullscreen(image);
+        } else {
+          onView(image);
+        }
+      }}
     >
       <div className="aspect-[4/3] relative overflow-hidden">
         <img
@@ -82,7 +89,11 @@ function ImageCard({ image, onView }: ImageCardProps) {
             <DropdownMenuContent align="end" onClick={(e) => e.stopPropagation()}>
               <DropdownMenuItem onClick={() => onView(image)}>
                 <Eye className="h-4 w-4 mr-2" />
-                View
+                View Details
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => onFullscreen(image)}>
+                <Maximize className="h-4 w-4 mr-2" />
+                Full Screen
               </DropdownMenuItem>
               <DropdownMenuItem>
                 <Download className="h-4 w-4 mr-2" />
@@ -168,8 +179,10 @@ export function ImageGrid() {
   const { theme } = useTheme();
   const { getFilteredImages, addImages } = useAppStore();
   const [selectedImage, setSelectedImage] = useState<ImageData | null>(null);
+  const [fullscreenImage, setFullscreenImage] = useState<ImageData | null>(null);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  
+
   const images = getFilteredImages();
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -238,11 +251,15 @@ export function ImageGrid() {
         onDrop={handleDrop}
         onDragOver={handleDragOver}
       >
-        {images.map(image => (
+        {images.map((image, index) => (
           <ImageCard
             key={image.id}
             image={image}
             onView={setSelectedImage}
+            onFullscreen={(img) => {
+              setFullscreenImage(img);
+              setCurrentImageIndex(index);
+            }}
           />
         ))}
       </div>
@@ -256,6 +273,20 @@ export function ImageGrid() {
         onChange={handleFileUpload}
         className="hidden"
       />
+
+      {/* Full Screen Image Viewer */}
+      {fullscreenImage && (
+        <FullScreenImageViewer
+          image={fullscreenImage}
+          images={images}
+          currentIndex={currentImageIndex}
+          onClose={() => setFullscreenImage(null)}
+          onNavigate={(index) => {
+            setCurrentImageIndex(index);
+            setFullscreenImage(images[index]);
+          }}
+        />
+      )}
 
       {/* Image Modal */}
       <Dialog open={!!selectedImage} onOpenChange={() => setSelectedImage(null)}>
