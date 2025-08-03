@@ -105,10 +105,17 @@ export function GoogleDriveImport() {
   const confirmImport = () => {
     // Convert Google Drive files to ImageData format
     const imageFiles = previewFiles.map((file, index) => {
-      const { title, rawTags, processedTags } = processImageTags(file.name);
+      const imageId = Date.now().toString() + index;
+      const { title, rawTags, processedTags } = processImageTags(
+        file.name,
+        undefined,
+        undefined,
+        undefined,
+        imageId
+      );
 
       return {
-        id: Date.now().toString() + index,
+        id: imageId,
         name: file.name,
         title,
         url: file.webContentLink || file.thumbnailLink,
