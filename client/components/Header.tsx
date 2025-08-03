@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { Search, Filter, Grid, List, Plus, Palette } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { useTheme } from './ThemeProvider';
 import { useAppStore } from '@/lib/store';
 import { SortControls } from './SortControls';
@@ -42,11 +43,22 @@ export function Header() {
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center gap-4">
           {/* Logo */}
-          <div className="flex items-center gap-2">
-            <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
-              <span className="text-primary-foreground font-bold text-sm">TG</span>
-            </div>
-            <h1 className="font-bold text-lg hidden sm:block">TagEngine</h1>
+          <div className="flex items-center gap-4">
+            <Link to="/" className="flex items-center gap-2">
+              <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
+                <span className="text-primary-foreground font-bold text-sm">TG</span>
+              </div>
+              <h1 className="font-bold text-lg hidden sm:block">TagEngine</h1>
+            </Link>
+
+            <nav className="hidden md:flex items-center gap-4">
+              <Link to="/folders">
+                <Button variant="ghost" size="sm">
+                  <Grid className="h-4 w-4 mr-2" />
+                  Folders
+                </Button>
+              </Link>
+            </nav>
           </div>
 
           {/* Search Bar */}
