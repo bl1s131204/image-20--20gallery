@@ -5,7 +5,7 @@ import { useTheme } from "./ThemeProvider";
 import { useAppStore } from "@/lib/store";
 import { SortControls } from "./SortControls";
 import { GoogleDriveImport } from "./GoogleDriveImport";
-import { linkLocalFolder, isFileSystemAccessSupported } from "@/lib/localFolderManager";
+import { linkLocalFolder, isFileSystemAccessSupported, getFileSystemAccessError } from "@/lib/localFolderManager";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import {
@@ -44,8 +44,8 @@ export function Header() {
   const handleLinkLocalFolder = async () => {
     if (!isFileSystemAccessSupported()) {
       toast({
-        title: "Not Supported",
-        description: "File System Access API is not supported in this browser. Please use Chrome, Edge, or another Chromium-based browser.",
+        title: "Cannot Link Folder",
+        description: getFileSystemAccessError(),
         variant: "destructive"
       });
       return;
