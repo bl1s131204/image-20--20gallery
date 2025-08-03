@@ -136,10 +136,17 @@ export const useAppStore = create<AppState>()((set, get) => ({
       // Actions
       addImages: (files: File[]) => {
         const newImages: ImageData[] = files.map((file, index) => {
-          const { title, rawTags, processedTags } = processImageTags(file.name);
+          const imageId = Date.now().toString() + index;
+          const { title, rawTags, processedTags } = processImageTags(
+            file.name,
+            undefined,
+            undefined,
+            undefined,
+            imageId
+          );
 
           return {
-            id: Date.now().toString() + index,
+            id: imageId,
             name: file.name,
             title,
             url: URL.createObjectURL(file),
@@ -292,21 +299,22 @@ export const useAppStore = create<AppState>()((set, get) => ({
 
       refreshTagVariants: () => {
         const state = get();
-        const allRawTags = state.images.flatMap(img => img.rawTags);
-        const tagVariants = normalizeAndGroupTags(allRawTags);
-        
+        const allRawTagSources = state.images.flatMap(img => img.rawTags);
+        const tagVariants = normalizeAndGroupTags(allRawTagSources);
+
         set({ tagVariants });
-        
+
         // Update processed tags on images
         set(state => ({
           images: state.images.map(img => {
+            const rawTagValues = img.rawTags.map(source => source.value);
             const processedTags = tagVariants
-              .filter(variant => 
-                variant.aliases.some(alias => img.rawTags.includes(alias)) ||
-                img.rawTags.includes(variant.canonical)
+              .filter(variant =>
+                variant.aliases.some(alias => rawTagValues.includes(alias)) ||
+                rawTagValues.includes(variant.canonical)
               )
               .map(variant => variant.canonical);
-            
+
             return { ...img, tags: processedTags };
           })
         }));
@@ -322,8 +330,13 @@ export function initializeMockData() {
     
     // Process tags for mock images
     const processedImages = mockImages.map(img => {
-      const { title, rawTags, processedTags } = processImageTags(img.name,
-        mockFolders.find(f => f.id === img.folder)?.name
+      const folderName = mockFolders.find(f => f.id === img.folder)?.name;
+      const { title, rawTags, processedTags } = processImageTags(
+        img.name,
+        folderName,
+        undefined,
+        undefined,
+        img.id
       );
       return { ...img, title, rawTags, tags: processedTags };
     });
