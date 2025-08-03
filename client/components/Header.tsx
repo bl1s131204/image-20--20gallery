@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { useTheme } from './ThemeProvider';
 import { useAppStore } from '@/lib/store';
 import { SortControls } from './SortControls';
+import { GoogleDriveImport } from './GoogleDriveImport';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import {
@@ -169,6 +170,9 @@ export function Header() {
 
             {/* Sorting Controls */}
             <SortControls />
+
+            {/* Google Drive Import */}
+            <GoogleDriveImport />
 
             {/* Add Images Button */}
             <Button
