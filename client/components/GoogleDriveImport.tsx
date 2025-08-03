@@ -19,27 +19,27 @@ import {
 const mockGoogleDriveFiles = [
   {
     id: '1',
-    name: 'forced_feminization_training.jpg',
+    name: 'Summer photoshoot ,, outdoor modeling ,, natural lighting ,, professional photos.jpg',
     mimeType: 'image/jpeg',
     size: '1200000',
     thumbnailLink: 'https://images.unsplash.com/photo-1494790108755-2616c5e2e3f8?w=150&h=150&fit=crop',
-    webContentLink: 'https://images.unsplash.com/photo-1494790108755-2616c5e2e3f8?w=800&h=1000&fit=crop'
+    webContentLink: 'https://images.unsplash.com/photo-1494790108755-2616c5e2e3f8?w=400&h=300&fit=crop'
   },
   {
     id: '2',
-    name: 'sissy_makeup_tutorial.png',
+    name: 'Portrait session ,, studio photography ,, glamour shots.png',
     mimeType: 'image/png',
     size: '890000',
     thumbnailLink: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=150&h=150&fit=crop',
-    webContentLink: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=800&h=1000&fit=crop'
+    webContentLink: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=400&h=300&fit=crop'
   },
   {
     id: '3',
-    name: 'latex_outfit_collection.jpg',
+    name: 'Fashion showcase ,, elegant outfits ,, runway style.jpg',
     mimeType: 'image/jpeg',
     size: '1500000',
     thumbnailLink: 'https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?w=150&h=150&fit=crop',
-    webContentLink: 'https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?w=800&h=1000&fit=crop'
+    webContentLink: 'https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?w=400&h=300&fit=crop'
   }
 ];
 
@@ -105,11 +105,12 @@ export function GoogleDriveImport() {
   const confirmImport = () => {
     // Convert Google Drive files to ImageData format
     const imageFiles = previewFiles.map((file, index) => {
-      const { rawTags, processedTags } = processImageTags(file.name);
-      
+      const { title, rawTags, processedTags } = processImageTags(file.name);
+
       return {
         id: Date.now().toString() + index,
         name: file.name,
+        title,
         url: file.webContentLink || file.thumbnailLink,
         size: parseInt(file.size),
         type: file.mimeType,
