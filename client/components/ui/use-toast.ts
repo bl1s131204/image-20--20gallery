@@ -1,19 +1,19 @@
-import { toast as sonnerToast } from 'sonner';
+import { toast as sonnerToast } from "sonner";
 
 export interface ToastProps {
   title: string;
   description?: string;
-  variant?: 'default' | 'destructive';
+  variant?: "default" | "destructive";
 }
 
-export function toast({ title, description, variant = 'default' }: ToastProps) {
-  if (variant === 'destructive') {
+export function toast({ title, description, variant = "default" }: ToastProps) {
+  if (variant === "destructive") {
     sonnerToast.error(title, {
-      description
+      description,
     });
   } else {
     sonnerToast.success(title, {
-      description
+      description,
     });
   }
 }

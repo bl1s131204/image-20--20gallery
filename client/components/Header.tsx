@@ -1,11 +1,23 @@
 import React, { useState, useRef } from "react";
-import { Search, Filter, Grid, List, Plus, Palette, HardDrive } from "lucide-react";
+import {
+  Search,
+  Filter,
+  Grid,
+  List,
+  Plus,
+  Palette,
+  HardDrive,
+} from "lucide-react";
 import { Link } from "react-router-dom";
 import { useTheme } from "./ThemeProvider";
 import { useAppStore } from "@/lib/store";
 import { SortControls } from "./SortControls";
 import { GoogleDriveImport } from "./GoogleDriveImport";
-import { linkLocalFolder, isFileSystemAccessSupported, getFileSystemAccessError } from "@/lib/localFolderManager";
+import {
+  linkLocalFolder,
+  isFileSystemAccessSupported,
+  getFileSystemAccessError,
+} from "@/lib/localFolderManager";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import {
@@ -46,7 +58,7 @@ export function Header() {
       toast({
         title: "Cannot Link Folder",
         description: getFileSystemAccessError(),
-        variant: "destructive"
+        variant: "destructive",
       });
       return;
     }
@@ -56,14 +68,15 @@ export function Header() {
       if (folder) {
         toast({
           title: "Folder Linked",
-          description: `Successfully linked "${folder.name}" with ${folder.imageCount} images.`
+          description: `Successfully linked "${folder.name}" with ${folder.imageCount} images.`,
         });
       }
     } catch (error) {
       toast({
         title: "Error",
-        description: error instanceof Error ? error.message : "Failed to link folder",
-        variant: "destructive"
+        description:
+          error instanceof Error ? error.message : "Failed to link folder",
+        variant: "destructive",
       });
     }
   };
