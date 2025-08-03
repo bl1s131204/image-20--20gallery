@@ -1,10 +1,11 @@
 import React, { useState, useRef } from "react";
-import { Search, Filter, Grid, List, Plus, Palette } from "lucide-react";
+import { Search, Filter, Grid, List, Plus, Palette, HardDrive } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useTheme } from "./ThemeProvider";
 import { useAppStore } from "@/lib/store";
 import { SortControls } from "./SortControls";
 import { GoogleDriveImport } from "./GoogleDriveImport";
+import { linkLocalFolder, isFileSystemAccessSupported } from "@/lib/localFolderManager";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import {
@@ -14,6 +15,7 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { Badge } from "./ui/badge";
+import { toast } from "./ui/use-toast";
 
 export function Header() {
   const { theme, setTheme, themes } = useTheme();
@@ -36,6 +38,33 @@ export function Header() {
     const files = Array.from(event.target.files || []);
     if (files.length > 0) {
       addImages(files);
+    }
+  };
+
+  const handleLinkLocalFolder = async () => {
+    if (!isFileSystemAccessSupported()) {
+      toast({
+        title: "Not Supported",
+        description: "File System Access API is not supported in this browser. Please use Chrome, Edge, or another Chromium-based browser.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    try {
+      const folder = await linkLocalFolder();
+      if (folder) {
+        toast({
+          title: "Folder Linked",
+          description: `Successfully linked "${folder.name}" with ${folder.imageCount} images.`
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to link folder",
+        variant: "destructive"
+      });
     }
   };
 
@@ -175,6 +204,19 @@ export function Header() {
 
             {/* Google Drive Import */}
             <GoogleDriveImport />
+
+            {/* Link Local Folder Button */}
+            {isFileSystemAccessSupported() && (
+              <Button
+                variant="outline"
+                size="sm"
+                className="hidden md:flex"
+                onClick={handleLinkLocalFolder}
+              >
+                <HardDrive className="h-4 w-4 mr-2" />
+                Link Folder
+              </Button>
+            )}
 
             {/* Add Images Button */}
             <Button
