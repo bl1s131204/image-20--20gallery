@@ -19,27 +19,27 @@ import {
 const mockGoogleDriveFiles = [
   {
     id: '1',
-    name: 'Summer photoshoot ,, outdoor modeling ,, natural lighting ,, professional photos.jpg',
+    name: 'Nature documentary ,, wildlife photography ,, outdoor expedition.jpg',
     mimeType: 'image/jpeg',
     size: '1200000',
-    thumbnailLink: 'https://images.unsplash.com/photo-1494790108755-2616c5e2e3f8?w=150&h=150&fit=crop',
-    webContentLink: 'https://images.unsplash.com/photo-1494790108755-2616c5e2e3f8?w=400&h=300&fit=crop'
+    thumbnailLink: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=150&h=150&fit=crop',
+    webContentLink: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=400&h=300&fit=crop'
   },
   {
     id: '2',
-    name: 'Portrait session ,, studio photography ,, glamour shots.png',
+    name: 'Travel photography ,, cultural exploration ,, world heritage.png',
     mimeType: 'image/png',
     size: '890000',
-    thumbnailLink: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=150&h=150&fit=crop',
-    webContentLink: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=400&h=300&fit=crop'
+    thumbnailLink: 'https://images.unsplash.com/photo-1539650116574-75c0c6d73c6e?w=150&h=150&fit=crop',
+    webContentLink: 'https://images.unsplash.com/photo-1539650116574-75c0c6d73c6e?w=400&h=300&fit=crop'
   },
   {
     id: '3',
-    name: 'Fashion showcase ,, elegant outfits ,, runway style.jpg',
+    name: 'Street photography ,, urban life ,, city moments.jpg',
     mimeType: 'image/jpeg',
     size: '1500000',
-    thumbnailLink: 'https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?w=150&h=150&fit=crop',
-    webContentLink: 'https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?w=400&h=300&fit=crop'
+    thumbnailLink: 'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=150&h=150&fit=crop',
+    webContentLink: 'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=400&h=300&fit=crop'
   }
 ];
 
