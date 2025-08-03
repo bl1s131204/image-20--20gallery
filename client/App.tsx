@@ -13,6 +13,7 @@ import { ImageGrid } from "./components/ImageGrid";
 import { initializeMockData } from "./lib/store";
 import { useEffect } from "react";
 import Index from "./pages/Index";
+import FolderSelection from "./pages/FolderSelection";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -44,7 +45,7 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<AppContent />} />
-            <Route path="/folders" element={<Index />} />
+            <Route path="/folders" element={<FolderSelection />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
