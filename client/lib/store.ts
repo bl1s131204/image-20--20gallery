@@ -41,10 +41,10 @@ interface AppState {
 const createMockImages = (): ImageData[] => [
   {
     id: '1',
-    name: 'Birth of a son ,, dressed as a girl ,, being pretty ,, gang of girls.jpg',
-    title: 'Birth of a son',
-    url: 'https://images.unsplash.com/photo-1494790108755-2616c5e2e3f8?w=400&h=300&fit=crop',
-    folder: 'training',
+    name: 'Mountain landscape ,, nature photography ,, scenic view.jpg',
+    title: 'Mountain landscape',
+    url: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=300&fit=crop',
+    folder: 'nature',
     size: 1200000,
     type: 'image/jpeg',
     dateAdded: new Date('2024-01-15'),
@@ -53,10 +53,10 @@ const createMockImages = (): ImageData[] => [
   },
   {
     id: '2',
-    name: 'Makeup transformation ,, crossdressing tutorial ,, feminine look.png',
-    title: 'Makeup transformation',
-    url: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=400&h=300&fit=crop',
-    folder: 'tutorials',
+    name: 'City architecture ,, modern buildings ,, urban design.png',
+    title: 'City architecture',
+    url: 'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=400&h=300&fit=crop',
+    folder: 'architecture',
     size: 890000,
     type: 'image/png',
     dateAdded: new Date('2024-01-16'),
@@ -65,10 +65,10 @@ const createMockImages = (): ImageData[] => [
   },
   {
     id: '3',
-    name: 'Fashion collection ,, latex dress ,, elegant outfit ,, party wear.jpg',
-    title: 'Fashion collection',
-    url: 'https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?w=400&h=300&fit=crop',
-    folder: 'outfits',
+    name: 'Abstract art ,, colorful painting ,, creative expression.jpg',
+    title: 'Abstract art',
+    url: 'https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=400&h=300&fit=crop',
+    folder: 'art',
     size: 1500000,
     type: 'image/jpeg',
     dateAdded: new Date('2024-01-17'),
@@ -77,10 +77,10 @@ const createMockImages = (): ImageData[] => [
   },
   {
     id: '4',
-    name: 'Training session ,, sissy hypno ,, mind control.webp',
-    title: 'Training session',
-    url: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=400&h=300&fit=crop',
-    folder: 'training',
+    name: 'Ocean waves ,, beach photography ,, coastal beauty.webp',
+    title: 'Ocean waves',
+    url: 'https://images.unsplash.com/photo-1439066615861-d1af74d74000?w=400&h=300&fit=crop',
+    folder: 'nature',
     size: 750000,
     type: 'image/webp',
     dateAdded: new Date('2024-01-18'),
@@ -89,10 +89,10 @@ const createMockImages = (): ImageData[] => [
   },
   {
     id: '5',
-    name: 'Complete guide ,, feminization steps ,, transformation journey.jpg',
-    title: 'Complete guide',
-    url: 'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=400&h=300&fit=crop',
-    folder: 'guides',
+    name: 'Food photography ,, culinary art ,, gourmet presentation.jpg',
+    title: 'Food photography',
+    url: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?w=400&h=300&fit=crop',
+    folder: 'food',
     size: 980000,
     type: 'image/jpeg',
     dateAdded: new Date('2024-01-19'),
@@ -101,10 +101,10 @@ const createMockImages = (): ImageData[] => [
   },
   {
     id: '6',
-    name: 'Roleplay scenario ,, dominant mistress ,, submissive training.png',
-    title: 'Roleplay scenario',
-    url: 'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=400&h=300&fit=crop',
-    folder: 'roleplay',
+    name: 'Technology concept ,, digital innovation ,, modern workspace.png',
+    title: 'Technology concept',
+    url: 'https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=400&h=300&fit=crop',
+    folder: 'technology',
     size: 1100000,
     type: 'image/png',
     dateAdded: new Date('2024-01-20'),
@@ -114,11 +114,11 @@ const createMockImages = (): ImageData[] => [
 ];
 
 const createMockFolders = (): FolderData[] => [
-  { id: 'training', name: 'Training Set', images: ['1', '4'] },
-  { id: 'tutorials', name: 'Tutorials', images: ['2'] },
-  { id: 'outfits', name: 'Outfits', images: ['3'] },
-  { id: 'guides', name: 'Guides', images: ['5'] },
-  { id: 'roleplay', name: 'Roleplay', images: ['6'] }
+  { id: 'nature', name: 'Nature & Landscape', images: ['1', '4'] },
+  { id: 'architecture', name: 'Architecture', images: ['2'] },
+  { id: 'art', name: 'Art & Creative', images: ['3'] },
+  { id: 'food', name: 'Food & Culinary', images: ['5'] },
+  { id: 'technology', name: 'Technology', images: ['6'] }
 ];
 
 export const useAppStore = create<AppState>()((set, get) => ({
