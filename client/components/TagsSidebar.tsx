@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Hash, TrendingUp, Star, Clock, Search, Eye, EyeOff } from 'lucide-react';
 import { useAppStore } from '@/lib/store';
 import { useTheme } from './ThemeProvider';
+import { LinkedFolders } from './LinkedFolders';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { Input } from './ui/input';
@@ -140,6 +141,11 @@ export function TagsSidebar() {
             <div className="text-xs text-muted-foreground">Avg Quality</div>
           </div>
         </div>
+      </div>
+
+      {/* Linked Folders */}
+      <div className="p-4 border-b">
+        <LinkedFolders />
       </div>
 
       {/* Tags List */}
