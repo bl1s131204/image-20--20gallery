@@ -13,8 +13,13 @@ import {
 export function SortControls() {
   const { sortField, sortDirection, setSorting } = useAppStore();
 
+  const { searchQuery } = useAppStore();
+
   const sortOptions: { field: SortField; label: string }[] = [
-    { field: 'name', label: 'Name' },
+    { field: 'relevance', label: 'Relevance' },
+    { field: 'title', label: 'Title' },
+    { field: 'name', label: 'File Name' },
+    { field: 'tags', label: 'Tag Count' },
     { field: 'date', label: 'Date Added' },
     { field: 'size', label: 'File Size' },
     { field: 'type', label: 'File Type' },
@@ -34,19 +39,29 @@ export function SortControls() {
         <DropdownMenuTrigger asChild>
           <Button variant="outline" size="sm">
             <ArrowUpDown className="h-4 w-4 mr-2" />
-            Sort by {sortOptions.find(opt => opt.field === sortField)?.label}
+            {sortOptions.find(opt => opt.field === sortField)?.label || 'Sort'}
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          {sortOptions.map((option) => (
-            <DropdownMenuItem
-              key={option.field}
-              onClick={() => changeSortField(option.field)}
-              className={sortField === option.field ? 'bg-accent' : ''}
-            >
-              {option.label}
-            </DropdownMenuItem>
-          ))}
+          {sortOptions.map((option) => {
+            // Hide relevance option if no search query
+            if (option.field === 'relevance' && !searchQuery) {
+              return null;
+            }
+
+            return (
+              <DropdownMenuItem
+                key={option.field}
+                onClick={() => changeSortField(option.field)}
+                className={sortField === option.field ? 'bg-accent' : ''}
+              >
+                {option.label}
+                {option.field === 'relevance' && searchQuery && (
+                  <span className="ml-auto text-xs text-muted-foreground">for "{searchQuery}"</span>
+                )}
+              </DropdownMenuItem>
+            );
+          })}
         </DropdownMenuContent>
       </DropdownMenu>
       
