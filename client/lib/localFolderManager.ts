@@ -19,9 +19,50 @@ export interface StoredLinkedFolder {
   lastAccessed: string;
 }
 
-// Check if File System Access API is supported
+// Check if we're in an iframe
+function isInIframe(): boolean {
+  try {
+    return window.self !== window.top;
+  } catch (e) {
+    return true; // If we can't access window.top, we're likely in an iframe
+  }
+}
+
+// Check if File System Access API is supported and usable
 export function isFileSystemAccessSupported(): boolean {
-  return 'showDirectoryPicker' in window && 'queryPermission' in FileSystemDirectoryHandle.prototype;
+  // Must have the API
+  if (!('showDirectoryPicker' in window)) {
+    return false;
+  }
+
+  // Must not be in an iframe (security restriction)
+  if (isInIframe()) {
+    return false;
+  }
+
+  // Must be in a secure context
+  if (!window.isSecureContext) {
+    return false;
+  }
+
+  return true;
+}
+
+// Get specific reason why File System Access is not supported
+export function getFileSystemAccessError(): string {
+  if (!('showDirectoryPicker' in window)) {
+    return 'File System Access API is not supported in this browser. Please use Chrome, Edge, or another Chromium-based browser.';
+  }
+
+  if (isInIframe()) {
+    return 'File System Access API cannot be used in iframe environments for security reasons. Please open this app in a new tab or window.';
+  }
+
+  if (!window.isSecureContext) {
+    return 'File System Access API requires a secure context (HTTPS). Please access this app over HTTPS.';
+  }
+
+  return 'File System Access API is not available.';
 }
 
 // IndexedDB setup
@@ -168,7 +209,7 @@ export async function checkFolderPermissions(handle: FileSystemDirectoryHandle):
 // Link a new local folder
 export async function linkLocalFolder(): Promise<LinkedFolder | null> {
   if (!isFileSystemAccessSupported()) {
-    throw new Error('File System Access API is not supported in this browser');
+    throw new Error(getFileSystemAccessError());
   }
   
   try {
