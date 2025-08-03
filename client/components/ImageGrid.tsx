@@ -1,11 +1,13 @@
 import React, { useState, useRef } from 'react';
-import { MoreVertical, Download, Trash2, FolderPlus, Eye, Heart } from 'lucide-react';
+import { MoreVertical, Download, Trash2, FolderPlus, Eye, Heart, Brain } from 'lucide-react';
 import { useAppStore } from '@/lib/store';
 import { useTheme } from './ThemeProvider';
 import { ImageData } from '@/lib/tagEngine';
+import { AITagSuggestions } from './AITagSuggestions';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { Card, CardContent } from './ui/card';
+import { Separator } from './ui/separator';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -277,15 +279,31 @@ export function ImageGrid() {
                     <p className="text-sm mb-4">{selectedImage.title || selectedImage.name}</p>
 
                     <h4 className="font-medium mb-2">Tags</h4>
-                    <div className="flex flex-wrap gap-2">
+                    <div className="flex flex-wrap gap-2 mb-4">
                       {selectedImage.tags.map(tag => (
                         <Badge key={tag} variant="secondary">
                           {tag}
                         </Badge>
                       ))}
+                      {selectedImage.tags.length === 0 && (
+                        <span className="text-sm text-muted-foreground">No tags yet</span>
+                      )}
                     </div>
                   </div>
-                  
+
+                  {/* AI Tag Suggestions */}
+                  <AITagSuggestions
+                    imageId={selectedImage.id}
+                    filename={selectedImage.name}
+                    currentTags={selectedImage.tags}
+                    onAddTag={(tag) => {
+                      console.log(`Adding tag "${tag}" to image ${selectedImage.id}`);
+                      // TODO: Implement tag addition to store
+                    }}
+                  />
+
+                  <Separator />
+
                   <div>
                     <h4 className="font-medium mb-2">Details</h4>
                     <div className="space-y-1 text-sm text-muted-foreground">
@@ -296,6 +314,7 @@ export function ImageGrid() {
                       {selectedImage.dateAdded && (
                         <div>Added: {selectedImage.dateAdded.toLocaleDateString()}</div>
                       )}
+                      <div>Raw Sources: {selectedImage.rawTags.length} tag sources</div>
                     </div>
                   </div>
                 </div>
