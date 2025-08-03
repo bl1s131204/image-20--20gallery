@@ -4,161 +4,169 @@
 
 @layer base {
   /**
-   * Tailwind CSS theme
-   * tailwind.config.ts expects the following color variables to be expressed as HSL values.
-   * A different format will require also updating the theme in tailwind.config.ts.
-  */
+   * Refined Tailwind CSS themes with proper contrast
+   * All color variables are expressed as HSL values for consistency
+   */
   :root {
-    /* Light Theme */
-    --background: 248 250 252;
-    --foreground: 15 23 42;
-    --card: 255 255 255;
-    --card-foreground: 15 23 42;
-    --popover: 255 255 255;
-    --popover-foreground: 15 23 42;
-    --primary: 15 23 42;
-    --primary-foreground: 248 250 252;
-    --secondary: 241 245 249;
-    --secondary-foreground: 15 23 42;
-    --muted: 241 245 249;
-    --muted-foreground: 100 116 139;
-    --accent: 241 245 249;
-    --accent-foreground: 15 23 42;
-    --destructive: 239 68 68;
-    --destructive-foreground: 248 250 252;
-    --border: 226 232 240;
-    --input: 226 232 240;
-    --ring: 15 23 42;
+    /* Light Theme - Pure White Background */
+    --background: 0 0% 100%;
+    --foreground: 0 0% 0%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 0%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 0%;
+    --primary: 0 0% 9%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 0 0% 96%;
+    --secondary-foreground: 0 0% 9%;
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 45%;
+    --accent: 0 0% 96%;
+    --accent-foreground: 0 0% 9%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 90%;
+    --input: 0 0% 90%;
+    --ring: 0 0% 9%;
     --radius: 0.5rem;
 
     /* Theme-specific colors */
-    --gold: 45 90% 50%;
-    --gold-foreground: 20 14% 4%;
-    --neon: 120 100% 50%;
-    --neon-foreground: 0 0% 0%;
+    --gold: 45 93% 47%;
+    --gold-foreground: 0 0% 0%;
+    --neon-primary: 120 100% 50%;
+    --neon-secondary: 300 100% 50%;
+    --neon-tertiary: 60 100% 50%;
+    --neon-quaternary: 240 100% 50%;
     --neon-glow: 120 100% 50%;
     --cyberpunk-pink: 320 100% 50%;
-    --cyberpunk-blue: 200 100% 50%;
-    --cyberpunk-dark: 240 10% 5%;
+    --cyberpunk-blue: 195 100% 50%;
+    --cyberpunk-dark: 240 15% 6%;
   }
 
   .dark {
-    --background: 8 8 11;
-    --foreground: 250 250 250;
-    --card: 8 8 11;
-    --card-foreground: 250 250 250;
-    --popover: 8 8 11;
-    --popover-foreground: 250 250 250;
-    --primary: 250 250 250;
-    --primary-foreground: 8 8 11;
-    --secondary: 39 39 42;
-    --secondary-foreground: 250 250 250;
-    --muted: 39 39 42;
-    --muted-foreground: 161 161 170;
-    --accent: 39 39 42;
-    --accent-foreground: 250 250 250;
-    --destructive: 239 68 68;
-    --destructive-foreground: 250 250 250;
-    --border: 39 39 42;
-    --input: 39 39 42;
-    --ring: 212 212 216;
+    /* Dark Theme - Pure Black Background */
+    --background: 0 0% 0%;
+    --foreground: 0 0% 98%;
+    --card: 0 0% 4%;
+    --card-foreground: 0 0% 98%;
+    --popover: 0 0% 4%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 0 0% 9%;
+    --secondary: 0 0% 15%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 0% 15%;
+    --muted-foreground: 0 0% 63%;
+    --accent: 0 0% 15%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 15%;
+    --input: 0 0% 15%;
+    --ring: 0 0% 83%;
 
     /* Theme-specific colors */
-    --gold: 45 90% 50%;
-    --gold-foreground: 250 250 250;
-    --neon: 120 100% 50%;
-    --neon-foreground: 0 0% 0%;
+    --gold: 45 93% 47%;
+    --gold-foreground: 0 0% 0%;
+    --neon-primary: 120 100% 50%;
+    --neon-secondary: 300 100% 50%;
+    --neon-tertiary: 60 100% 50%;
+    --neon-quaternary: 240 100% 50%;
     --neon-glow: 120 100% 50%;
     --cyberpunk-pink: 320 100% 50%;
-    --cyberpunk-blue: 200 100% 50%;
-    --cyberpunk-dark: 240 10% 5%;
+    --cyberpunk-blue: 195 100% 50%;
+    --cyberpunk-dark: 240 15% 6%;
   }
 
   .theme-gold {
-    --background: 20 14% 4%;
-    --foreground: 45 90% 70%;
-    --card: 30 20% 8%;
-    --card-foreground: 45 90% 70%;
-    --popover: 30 20% 8%;
-    --popover-foreground: 45 90% 70%;
-    --primary: 45 90% 50%;
-    --primary-foreground: 20 14% 4%;
-    --secondary: 40 30% 15%;
-    --secondary-foreground: 45 90% 70%;
-    --muted: 40 30% 15%;
-    --muted-foreground: 45 60% 40%;
-    --accent: 45 80% 40%;
-    --accent-foreground: 20 14% 4%;
+    /* Gold Theme - Elegant golden palette */
+    --background: 45 15% 8%;
+    --foreground: 45 80% 85%;
+    --card: 45 20% 12%;
+    --card-foreground: 45 80% 85%;
+    --popover: 45 20% 12%;
+    --popover-foreground: 45 80% 85%;
+    --primary: 45 93% 47%;
+    --primary-foreground: 45 15% 8%;
+    --secondary: 45 25% 18%;
+    --secondary-foreground: 45 80% 85%;
+    --muted: 45 25% 18%;
+    --muted-foreground: 45 40% 55%;
+    --accent: 45 85% 35%;
+    --accent-foreground: 45 15% 8%;
     --destructive: 0 84% 60%;
-    --destructive-foreground: 45 90% 70%;
-    --border: 40 30% 15%;
-    --input: 40 30% 15%;
-    --ring: 45 90% 50%;
+    --destructive-foreground: 45 80% 85%;
+    --border: 45 30% 25%;
+    --input: 45 25% 18%;
+    --ring: 45 93% 47%;
 
-    --gold: 45 90% 50%;
-    --gold-foreground: 20 14% 4%;
-    --neon: 45 90% 50%;
-    --neon-foreground: 20 14% 4%;
-    --neon-glow: 45 90% 50%;
+    --gold: 45 93% 47%;
+    --gold-foreground: 45 15% 8%;
+    --neon-primary: 45 93% 47%;
+    --neon-glow: 45 93% 47%;
   }
 
   .theme-neon {
-    --background: 0 0% 5%;
-    --foreground: 120 100% 80%;
-    --card: 0 0% 8%;
-    --card-foreground: 120 100% 80%;
-    --popover: 0 0% 8%;
-    --popover-foreground: 120 100% 80%;
+    /* Neon Theme - Multi-color vibrant background */
+    --background: 0 0% 3%;
+    --foreground: 120 100% 85%;
+    --card: 0 0% 6%;
+    --card-foreground: 120 100% 85%;
+    --popover: 0 0% 6%;
+    --popover-foreground: 120 100% 85%;
     --primary: 120 100% 50%;
-    --primary-foreground: 0 0% 5%;
-    --secondary: 0 0% 12%;
-    --secondary-foreground: 120 100% 80%;
-    --muted: 0 0% 12%;
-    --muted-foreground: 120 50% 60%;
-    --accent: 120 80% 40%;
-    --accent-foreground: 0 0% 5%;
-    --destructive: 0 100% 50%;
-    --destructive-foreground: 120 100% 80%;
-    --border: 120 100% 20%;
-    --input: 0 0% 12%;
+    --primary-foreground: 0 0% 3%;
+    --secondary: 0 0% 10%;
+    --secondary-foreground: 300 100% 85%;
+    --muted: 0 0% 10%;
+    --muted-foreground: 120 60% 65%;
+    --accent: 300 100% 50%;
+    --accent-foreground: 0 0% 3%;
+    --destructive: 0 100% 60%;
+    --destructive-foreground: 120 100% 85%;
+    --border: 120 100% 25%;
+    --input: 0 0% 10%;
     --ring: 120 100% 50%;
 
-    --gold: 120 100% 50%;
-    --gold-foreground: 0 0% 5%;
-    --neon: 120 100% 50%;
-    --neon-foreground: 0 0% 5%;
+    --gold: 60 100% 50%;
+    --gold-foreground: 0 0% 3%;
+    --neon-primary: 120 100% 50%;
+    --neon-secondary: 300 100% 50%;
+    --neon-tertiary: 60 100% 50%;
+    --neon-quaternary: 240 100% 50%;
     --neon-glow: 120 100% 50%;
   }
 
   .theme-cyberpunk {
-    --background: 240 10% 5%;
-    --foreground: 320 100% 80%;
-    --card: 240 15% 8%;
-    --card-foreground: 320 100% 80%;
-    --popover: 240 15% 8%;
-    --popover-foreground: 320 100% 80%;
+    /* Cyberpunk Theme - High contrast pink/blue */
+    --background: 240 15% 4%;
+    --foreground: 320 100% 85%;
+    --card: 240 20% 8%;
+    --card-foreground: 320 100% 85%;
+    --popover: 240 20% 8%;
+    --popover-foreground: 320 100% 85%;
     --primary: 320 100% 50%;
-    --primary-foreground: 240 10% 5%;
-    --secondary: 200 50% 15%;
-    --secondary-foreground: 200 100% 80%;
-    --muted: 200 50% 15%;
-    --muted-foreground: 320 50% 60%;
-    --accent: 200 100% 50%;
-    --accent-foreground: 240 10% 5%;
-    --destructive: 0 100% 50%;
-    --destructive-foreground: 320 100% 80%;
-    --border: 320 100% 20%;
-    --input: 240 15% 8%;
+    --primary-foreground: 240 15% 4%;
+    --secondary: 195 80% 15%;
+    --secondary-foreground: 195 100% 85%;
+    --muted: 195 80% 15%;
+    --muted-foreground: 320 50% 65%;
+    --accent: 195 100% 50%;
+    --accent-foreground: 240 15% 4%;
+    --destructive: 0 100% 60%;
+    --destructive-foreground: 320 100% 85%;
+    --border: 320 100% 25%;
+    --input: 240 20% 8%;
     --ring: 320 100% 50%;
 
     --gold: 320 100% 50%;
-    --gold-foreground: 240 10% 5%;
-    --neon: 320 100% 50%;
-    --neon-foreground: 240 10% 5%;
+    --gold-foreground: 240 15% 4%;
+    --neon-primary: 320 100% 50%;
+    --neon-secondary: 195 100% 50%;
     --neon-glow: 320 100% 50%;
     --cyberpunk-pink: 320 100% 50%;
-    --cyberpunk-blue: 200 100% 50%;
-    --cyberpunk-dark: 240 10% 5%;
+    --cyberpunk-blue: 195 100% 50%;
+    --cyberpunk-dark: 240 15% 4%;
   }
 }
 
@@ -168,15 +176,25 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground transition-colors duration-300;
   }
 }
 
 @layer utilities {
+  /* Enhanced animations */
   .animate-reflow {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
+  .animate-glow {
+    animation: glow 2s ease-in-out infinite alternate;
+  }
+
+  .animate-pulse-slow {
+    animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  /* Backdrop blur utilities */
   .backdrop-blur-sm {
     backdrop-filter: blur(4px);
   }
@@ -185,11 +203,136 @@
     backdrop-filter: blur(8px);
   }
 
-  .theme-neon .border {
-    box-shadow: 0 0 5px currentColor;
+  .backdrop-blur-lg {
+    backdrop-filter: blur(16px);
   }
 
-  .theme-cyberpunk .border {
-    border-image: linear-gradient(45deg, hsl(var(--cyberpunk-pink)), hsl(var(--cyberpunk-blue))) 1;
+  /* Neon theme multi-color backgrounds */
+  .theme-neon {
+    background: 
+      radial-gradient(circle at 20% 80%, hsla(120, 100%, 50%, 0.15) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, hsla(300, 100%, 50%, 0.15) 0%, transparent 50%),
+      radial-gradient(circle at 40% 40%, hsla(60, 100%, 50%, 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 60% 80%, hsla(240, 100%, 50%, 0.1) 0%, transparent 50%),
+      hsl(var(--background));
+  }
+
+  .theme-neon .bg-background {
+    background: 
+      radial-gradient(circle at 20% 80%, hsla(120, 100%, 50%, 0.15) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, hsla(300, 100%, 50%, 0.15) 0%, transparent 50%),
+      radial-gradient(circle at 40% 40%, hsla(60, 100%, 50%, 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 60% 80%, hsla(240, 100%, 50%, 0.1) 0%, transparent 50%),
+      hsl(var(--background));
+  }
+
+  /* Neon glow effects */
+  .theme-neon .border {
+    box-shadow: 0 0 10px hsla(var(--neon-primary), 0.5);
+  }
+
+  .theme-neon .shadow-glow {
+    box-shadow: 
+      0 0 20px hsla(var(--neon-primary), 0.6),
+      0 0 40px hsla(var(--neon-secondary), 0.4),
+      0 0 60px hsla(var(--neon-tertiary), 0.2);
+  }
+
+  /* Cyberpunk border gradients */
+  .theme-cyberpunk .border-gradient {
+    background: linear-gradient(45deg, 
+      hsl(var(--cyberpunk-pink)), 
+      hsl(var(--cyberpunk-blue))
+    );
+    padding: 1px;
+  }
+
+  .theme-cyberpunk .border-gradient > * {
+    background: hsl(var(--background));
+  }
+
+  /* Gold theme metallic effects */
+  .theme-gold .metallic-shine {
+    background: linear-gradient(135deg, 
+      hsla(45, 93%, 47%, 0.1) 0%,
+      hsla(45, 93%, 60%, 0.2) 25%,
+      hsla(45, 93%, 47%, 0.1) 50%,
+      hsla(45, 93%, 35%, 0.2) 75%,
+      hsla(45, 93%, 47%, 0.1) 100%
+    );
+  }
+
+  /* Enhanced button styles for themes */
+  .theme-neon .btn-primary {
+    background: linear-gradient(45deg, 
+      hsl(var(--neon-primary)), 
+      hsl(var(--neon-secondary))
+    );
+    box-shadow: 0 0 20px hsla(var(--neon-primary), 0.5);
+  }
+
+  .theme-cyberpunk .btn-primary {
+    background: linear-gradient(45deg, 
+      hsl(var(--cyberpunk-pink)), 
+      hsl(var(--cyberpunk-blue))
+    );
+    box-shadow: 0 0 20px hsla(var(--cyberpunk-pink), 0.5);
+  }
+
+  .theme-gold .btn-primary {
+    background: linear-gradient(45deg, 
+      hsl(var(--gold)), 
+      hsla(45, 93%, 60%, 1)
+    );
+    box-shadow: 0 0 20px hsla(var(--gold), 0.4);
+  }
+
+  /* Improved contrast for accessibility */
+  .high-contrast {
+    filter: contrast(1.2);
+  }
+
+  /* Theme-specific scrollbars */
+  .theme-neon ::-webkit-scrollbar-thumb {
+    background: linear-gradient(45deg, 
+      hsl(var(--neon-primary)), 
+      hsl(var(--neon-secondary))
+    );
+  }
+
+  .theme-cyberpunk ::-webkit-scrollbar-thumb {
+    background: linear-gradient(45deg, 
+      hsl(var(--cyberpunk-pink)), 
+      hsl(var(--cyberpunk-blue))
+    );
+  }
+
+  .theme-gold ::-webkit-scrollbar-thumb {
+    background: hsl(var(--gold));
+  }
+
+  /* Responsive glow effects */
+  @media (prefers-reduced-motion: no-preference) {
+    .theme-neon .animate-glow {
+      animation: neon-glow 3s ease-in-out infinite alternate;
+    }
+  }
+
+  @keyframes neon-glow {
+    0% {
+      box-shadow: 
+        0 0 20px hsla(var(--neon-primary), 0.6),
+        0 0 40px hsla(var(--neon-secondary), 0.4);
+    }
+    50% {
+      box-shadow: 
+        0 0 30px hsla(var(--neon-secondary), 0.8),
+        0 0 50px hsla(var(--neon-tertiary), 0.5);
+    }
+    100% {
+      box-shadow: 
+        0 0 25px hsla(var(--neon-quaternary), 0.7),
+        0 0 45px hsla(var(--neon-primary), 0.4);
+    }
   }
 }
