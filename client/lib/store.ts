@@ -129,7 +129,7 @@ export const useAppStore = create<AppState>()((set, get) => ({
       searchQuery: '',
       selectedTags: [],
       selectedFolder: null,
-      sortField: 'date',
+      sortField: 'relevance',
       sortDirection: 'desc',
       showFilters: false,
 
@@ -294,7 +294,7 @@ export const useAppStore = create<AppState>()((set, get) => ({
         }
 
         // Apply sorting
-        return sortImages(filtered, state.sortField, state.sortDirection);
+        return sortImages(filtered, state.sortField, state.sortDirection, state.searchQuery);
       },
 
       refreshTagVariants: () => {
