@@ -9,6 +9,7 @@ export interface TagVariant {
 export interface ImageData {
   id: string;
   name: string;
+  title: string;
   url: string;
   folder?: string;
   size?: number;
@@ -73,44 +74,62 @@ function levenshteinDistance(str1: string, str2: string): number {
   return matrix[str2.length][str1.length];
 }
 
-// Extract tags from filename and folder
-export function extractRawTags(filename: string, folderName?: string): string[] {
-  const tags: string[] = [];
-  
+// Extract title and tags from filename using comma-separated format
+export function extractTitleAndTags(filename: string): { title: string; tags: string[] } {
   // Remove file extension
   const nameWithoutExt = filename.replace(/\.[^/.]+$/, '');
-  
-  // Split by various delimiters
-  const delimiters = /[_\-\s,.()[\]{}]+/;
-  const filenameParts = nameWithoutExt.split(delimiters);
-  
+
+  // Check if filename contains double commas (our special format)
+  if (nameWithoutExt.includes(',,')) {
+    const parts = nameWithoutExt.split(',,').map(part => part.trim());
+    const title = parts[0] || nameWithoutExt;
+    const tags = parts.slice(1).filter(tag => tag.length > 0);
+
+    return {
+      title,
+      tags
+    };
+  }
+
+  // Fallback to old behavior for files without double commas
+  // Use the first part as title, rest as tags
+  const delimiters = /[_\-\s,()\[\]{}]+/;
+  const parts = nameWithoutExt.split(delimiters).filter(part => part.length > 1);
+
+  if (parts.length === 0) {
+    return {
+      title: nameWithoutExt,
+      tags: []
+    };
+  }
+
+  // First 1-3 words become title, rest become tags
+  const titleWords = parts.slice(0, Math.min(3, Math.ceil(parts.length / 2)));
+  const tagWords = parts.slice(titleWords.length);
+
+  return {
+    title: titleWords.join(' '),
+    tags: tagWords.filter(tag =>
+      !tag.match(/^\d+$/) && // Remove numbers
+      !['jpg', 'png', 'jpeg', 'webp', 'gif'].includes(tag.toLowerCase()) // Remove file extensions
+    )
+  };
+}
+
+// Legacy function for backward compatibility
+export function extractRawTags(filename: string, folderName?: string): string[] {
+  const { tags } = extractTitleAndTags(filename);
+
   // Add folder name parts if available
   if (folderName) {
-    const folderParts = folderName.split(delimiters);
+    const delimiters = /[_\-\s,.()[\]{}]+/;
+    const folderParts = folderName.split(delimiters)
+      .map(part => part.toLowerCase().trim())
+      .filter(part => part.length > 1);
     tags.push(...folderParts);
   }
-  
-  // Add filename parts
-  tags.push(...filenameParts);
-  
-  // Split camelCase and PascalCase
-  const camelCaseRegex = /([a-z])([A-Z])/g;
-  const expandedTags: string[] = [];
-  
-  tags.forEach(tag => {
-    if (tag.length > 1) {
-      const expanded = tag.replace(camelCaseRegex, '$1 $2').toLowerCase();
-      expandedTags.push(...expanded.split(' '));
-    }
-  });
-  
-  // Combine and clean
-  const allTags = [...tags, ...expandedTags]
-    .map(tag => tag.toLowerCase().trim())
-    .filter(tag => tag.length > 1 && !tag.match(/^\d+$/)) // Remove numbers and single chars
-    .filter(tag => !['jpg', 'png', 'jpeg', 'webp', 'gif'].includes(tag)); // Remove file extensions
-  
-  return [...new Set(allTags)]; // Remove duplicates
+
+  return [...new Set(tags)]; // Remove duplicates
 }
 
 // Normalize and group similar tags
@@ -191,15 +210,28 @@ export function normalizeAndGroupTags(allRawTags: string[]): TagVariant[] {
 
 // Extract and normalize tags from an image
 export function processImageTags(filename: string, folderName?: string): {
+  title: string;
   rawTags: string[];
   processedTags: string[];
 } {
-  const rawTags = extractRawTags(filename, folderName);
-  const tagVariants = normalizeAndGroupTags(rawTags);
+  const { title, tags } = extractTitleAndTags(filename);
+
+  // Add folder tags if available
+  const allRawTags = [...tags];
+  if (folderName) {
+    const delimiters = /[_\-\s,.()[\]{}]+/;
+    const folderParts = folderName.split(delimiters)
+      .map(part => part.toLowerCase().trim())
+      .filter(part => part.length > 1);
+    allRawTags.push(...folderParts);
+  }
+
+  const tagVariants = normalizeAndGroupTags(allRawTags);
   const processedTags = tagVariants.map(variant => variant.canonical);
-  
+
   return {
-    rawTags,
+    title,
+    rawTags: allRawTags,
     processedTags
   };
 }
