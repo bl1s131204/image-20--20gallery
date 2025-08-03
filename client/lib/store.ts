@@ -1,5 +1,4 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
 import { ImageData, FolderData, TagVariant, SortField, SortDirection, processImageTags, normalizeAndGroupTags, sortImages } from './tagEngine';
 
 interface AppState {
@@ -116,9 +115,7 @@ const createMockFolders = (): FolderData[] => [
   { id: 'roleplay', name: 'Roleplay', images: ['6'] }
 ];
 
-export const useAppStore = create<AppState>()(
-  persist(
-    (set, get) => ({
+export const useAppStore = create<AppState>()((set, get) => ({
       // Initial state
       images: [],
       folders: [],
@@ -306,17 +303,7 @@ export const useAppStore = create<AppState>()(
           })
         }));
       }
-    }),
-    {
-      name: 'image-tag-app-storage',
-      partialize: (state) => ({
-        images: state.images,
-        folders: state.folders,
-        tagVariants: state.tagVariants
-      })
-    }
-  )
-);
+    }));
 
 // Initialize with mock data if empty
 export function initializeMockData() {
