@@ -47,15 +47,19 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        sidebar: {
-          DEFAULT: "hsl(var(--sidebar-background))",
-          foreground: "hsl(var(--sidebar-foreground))",
-          primary: "hsl(var(--sidebar-primary))",
-          "primary-foreground": "hsl(var(--sidebar-primary-foreground))",
-          accent: "hsl(var(--sidebar-accent))",
-          "accent-foreground": "hsl(var(--sidebar-accent-foreground))",
-          border: "hsl(var(--sidebar-border))",
-          ring: "hsl(var(--sidebar-ring))",
+        gold: {
+          DEFAULT: "hsl(var(--gold))",
+          foreground: "hsl(var(--gold-foreground))",
+        },
+        neon: {
+          DEFAULT: "hsl(var(--neon))",
+          foreground: "hsl(var(--neon-foreground))",
+          glow: "hsl(var(--neon-glow))",
+        },
+        cyberpunk: {
+          pink: "hsl(var(--cyberpunk-pink))",
+          blue: "hsl(var(--cyberpunk-blue))",
+          dark: "hsl(var(--cyberpunk-dark))",
         },
       },
       borderRadius: {
@@ -80,10 +84,34 @@ export default {
             height: "0",
           },
         },
+        "glow": {
+          "0%, 100%": {
+            boxShadow: "0 0 5px var(--neon-glow), 0 0 10px var(--neon-glow), 0 0 20px var(--neon-glow)",
+          },
+          "50%": {
+            boxShadow: "0 0 10px var(--neon-glow), 0 0 20px var(--neon-glow), 0 0 30px var(--neon-glow)",
+          },
+        },
+        "bounce-soft": {
+          "0%, 100%": {
+            transform: "translateY(0%)",
+            animationTimingFunction: "cubic-bezier(0.8,0,1,1)",
+          },
+          "50%": {
+            transform: "translateY(-5%)",
+            animationTimingFunction: "cubic-bezier(0,0,0.2,1)",
+          },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "glow": "glow 2s ease-in-out infinite alternate",
+        "bounce-soft": "bounce-soft 0.3s ease-out",
+      },
+      boxShadow: {
+        "glow": "0 0 20px var(--neon-glow)",
+        "glow-lg": "0 0 30px var(--neon-glow)",
       },
     },
   },
