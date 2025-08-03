@@ -52,8 +52,10 @@ export default {
           foreground: "hsl(var(--gold-foreground))",
         },
         neon: {
-          DEFAULT: "hsl(var(--neon))",
-          foreground: "hsl(var(--neon-foreground))",
+          primary: "hsl(var(--neon-primary))",
+          secondary: "hsl(var(--neon-secondary))",
+          tertiary: "hsl(var(--neon-tertiary))",
+          quaternary: "hsl(var(--neon-quaternary))",
           glow: "hsl(var(--neon-glow))",
         },
         cyberpunk: {
@@ -86,10 +88,28 @@ export default {
         },
         "glow": {
           "0%, 100%": {
-            boxShadow: "0 0 5px var(--neon-glow), 0 0 10px var(--neon-glow), 0 0 20px var(--neon-glow)",
+            boxShadow: "0 0 20px hsl(var(--neon-primary)), 0 0 40px hsl(var(--neon-secondary))",
           },
           "50%": {
-            boxShadow: "0 0 10px var(--neon-glow), 0 0 20px var(--neon-glow), 0 0 30px var(--neon-glow)",
+            boxShadow: "0 0 30px hsl(var(--neon-secondary)), 0 0 50px hsl(var(--neon-tertiary))",
+          },
+        },
+        "neon-pulse": {
+          "0%, 100%": {
+            opacity: "0.8",
+            transform: "scale(1)",
+          },
+          "50%": {
+            opacity: "1",
+            transform: "scale(1.05)",
+          },
+        },
+        "cyberpunk-flicker": {
+          "0%, 100%": {
+            opacity: "1",
+          },
+          "50%": {
+            opacity: "0.8",
           },
         },
         "bounce-soft": {
@@ -107,11 +127,16 @@ export default {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         "glow": "glow 2s ease-in-out infinite alternate",
+        "neon-pulse": "neon-pulse 3s ease-in-out infinite",
+        "cyberpunk-flicker": "cyberpunk-flicker 2s ease-in-out infinite",
         "bounce-soft": "bounce-soft 0.3s ease-out",
       },
       boxShadow: {
-        "glow": "0 0 20px var(--neon-glow)",
-        "glow-lg": "0 0 30px var(--neon-glow)",
+        "glow": "0 0 20px hsl(var(--neon-primary)), 0 0 40px hsl(var(--neon-secondary))",
+        "glow-lg": "0 0 30px hsl(var(--neon-primary)), 0 0 50px hsl(var(--neon-secondary)), 0 0 70px hsl(var(--neon-tertiary))",
+        "glow-neon": "0 0 20px hsl(var(--neon-glow))",
+        "glow-cyberpunk": "0 0 20px hsl(var(--cyberpunk-pink)), 0 0 40px hsl(var(--cyberpunk-blue))",
+        "glow-gold": "0 0 20px hsl(var(--gold))",
       },
     },
   },
