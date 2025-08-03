@@ -51,7 +51,7 @@ function ImageCard({ image, onView }: ImageCardProps) {
       onMouseLeave={() => setIsHovered(false)}
       onClick={() => onView(image)}
     >
-      <div className="aspect-[3/4] relative overflow-hidden">
+      <div className="aspect-[4/3] relative overflow-hidden">
         <img
           src={image.url}
           alt={image.name}
@@ -123,9 +123,9 @@ function ImageCard({ image, onView }: ImageCardProps) {
       </div>
       
       <CardContent className="p-3">
-        {/* Image Name */}
+        {/* Image Title */}
         <h3 className="font-medium text-sm truncate mb-2 group-hover:text-primary transition-colors">
-          {image.name}
+          {image.title || image.name}
         </h3>
         
         {/* Tags */}
@@ -273,6 +273,9 @@ export function ImageGrid() {
                 </div>
                 <div className="lg:w-80 space-y-4">
                   <div>
+                    <h4 className="font-medium mb-2">Title</h4>
+                    <p className="text-sm mb-4">{selectedImage.title || selectedImage.name}</p>
+
                     <h4 className="font-medium mb-2">Tags</h4>
                     <div className="flex flex-wrap gap-2">
                       {selectedImage.tags.map(tag => (
