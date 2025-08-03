@@ -1,31 +1,41 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Search, Filter, Grid, List, Plus, Palette } from 'lucide-react';
 import { useTheme } from './ThemeProvider';
 import { useAppStore } from '@/lib/store';
+import { SortControls } from './SortControls';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
-import { 
-  DropdownMenu, 
-  DropdownMenuContent, 
-  DropdownMenuItem, 
-  DropdownMenuTrigger 
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger
 } from './ui/dropdown-menu';
 import { Badge } from './ui/badge';
 
 export function Header() {
   const { theme, setTheme, themes } = useTheme();
-  const { 
-    searchQuery, 
-    setSearchQuery, 
-    showFilters, 
+  const {
+    searchQuery,
+    setSearchQuery,
+    showFilters,
     toggleFilters,
     selectedTags,
     folders,
     selectedFolder,
-    setSelectedFolder
+    setSelectedFolder,
+    addImages
   } = useAppStore();
 
   const [searchFocused, setSearchFocused] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(event.target.files || []);
+    if (files.length > 0) {
+      addImages(files);
+    }
+  };
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -145,11 +155,28 @@ export function Header() {
               </DropdownMenuContent>
             </DropdownMenu>
 
+            {/* Sorting Controls */}
+            <SortControls />
+
             {/* Add Images Button */}
-            <Button size="sm" className="hidden sm:flex">
+            <Button
+              size="sm"
+              className="hidden sm:flex"
+              onClick={() => fileInputRef.current?.click()}
+            >
               <Plus className="h-4 w-4 mr-2" />
               Add Images
             </Button>
+
+            {/* Hidden file input */}
+            <input
+              ref={fileInputRef}
+              type="file"
+              multiple
+              accept="image/*"
+              onChange={handleFileUpload}
+              className="hidden"
+            />
           </div>
         </div>
       </div>
