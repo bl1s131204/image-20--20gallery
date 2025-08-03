@@ -1,17 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import { Sparkles, Plus, X, Brain, Lightbulb } from 'lucide-react';
-import { useAppStore } from '@/lib/store';
-import { AITagging } from '@/lib/tagEngine';
-import { Button } from './ui/button';
-import { Badge } from './ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
-import { Separator } from './ui/separator';
+import React, { useState, useEffect } from "react";
+import { Sparkles, Plus, X, Brain, Lightbulb } from "lucide-react";
+import { useAppStore } from "@/lib/store";
+import { AITagging } from "@/lib/tagEngine";
+import { Button } from "./ui/button";
+import { Badge } from "./ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+import { Separator } from "./ui/separator";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from './ui/tooltip';
+} from "./ui/tooltip";
 
 interface AITagSuggestionsProps {
   imageId: string;
@@ -20,11 +20,11 @@ interface AITagSuggestionsProps {
   onAddTag: (tag: string) => void;
 }
 
-export function AITagSuggestions({ 
-  imageId, 
-  filename, 
-  currentTags, 
-  onAddTag 
+export function AITagSuggestions({
+  imageId,
+  filename,
+  currentTags,
+  onAddTag,
 }: AITagSuggestionsProps) {
   const { tagVariants } = useAppStore();
   const [suggestions, setSuggestions] = useState<string[]>([]);
@@ -37,22 +37,29 @@ export function AITagSuggestions({
 
   const generateSuggestions = async () => {
     setIsGenerating(true);
-    
+
     // Simulate AI processing delay
-    await new Promise(resolve => setTimeout(resolve, 800));
-    
+    await new Promise((resolve) => setTimeout(resolve, 800));
+
     try {
       // Generate contextual suggestions
-      const contextualSuggestions = AITagging.suggestTags(filename, tagVariants);
-      
+      const contextualSuggestions = AITagging.suggestTags(
+        filename,
+        tagVariants,
+      );
+
       // Generate semantic enhancements
       const enhanced = AITagging.enhanceWithSemantics(currentTags);
-      const newSemanticTags = enhanced.filter(tag => !currentTags.includes(tag));
-      
-      setSuggestions(contextualSuggestions.filter(tag => !currentTags.includes(tag)));
+      const newSemanticTags = enhanced.filter(
+        (tag) => !currentTags.includes(tag),
+      );
+
+      setSuggestions(
+        contextualSuggestions.filter((tag) => !currentTags.includes(tag)),
+      );
       setSemanticTags(newSemanticTags);
     } catch (error) {
-      console.warn('Failed to generate AI suggestions:', error);
+      console.warn("Failed to generate AI suggestions:", error);
     } finally {
       setIsGenerating(false);
     }
@@ -60,13 +67,13 @@ export function AITagSuggestions({
 
   const handleAddSuggestion = (tag: string) => {
     onAddTag(tag);
-    setSuggestions(prev => prev.filter(t => t !== tag));
-    setSemanticTags(prev => prev.filter(t => t !== tag));
+    setSuggestions((prev) => prev.filter((t) => t !== tag));
+    setSemanticTags((prev) => prev.filter((t) => t !== tag));
   };
 
   const handleDismissSuggestion = (tag: string) => {
-    setSuggestions(prev => prev.filter(t => t !== tag));
-    setSemanticTags(prev => prev.filter(t => t !== tag));
+    setSuggestions((prev) => prev.filter((t) => t !== tag));
+    setSemanticTags((prev) => prev.filter((t) => t !== tag));
   };
 
   if (suggestions.length === 0 && semanticTags.length === 0 && !isGenerating) {
@@ -99,10 +106,10 @@ export function AITagSuggestions({
               </span>
             </div>
             <div className="flex flex-wrap gap-2">
-              {suggestions.map(tag => (
+              {suggestions.map((tag) => (
                 <div key={tag} className="flex items-center gap-1">
-                  <Badge 
-                    variant="secondary" 
+                  <Badge
+                    variant="secondary"
                     className="text-xs cursor-pointer hover:bg-accent transition-colors pr-1"
                   >
                     {tag}
@@ -124,7 +131,7 @@ export function AITagSuggestions({
                           </TooltipContent>
                         </Tooltip>
                       </TooltipProvider>
-                      
+
                       <TooltipProvider>
                         <Tooltip>
                           <TooltipTrigger asChild>
@@ -162,10 +169,10 @@ export function AITagSuggestions({
                 </span>
               </div>
               <div className="flex flex-wrap gap-2">
-                {semanticTags.map(tag => (
+                {semanticTags.map((tag) => (
                   <div key={tag} className="flex items-center gap-1">
-                    <Badge 
-                      variant="outline" 
+                    <Badge
+                      variant="outline"
                       className="text-xs cursor-pointer hover:bg-accent transition-colors pr-1 border-yellow-200"
                     >
                       {tag}
@@ -187,7 +194,7 @@ export function AITagSuggestions({
                             </TooltipContent>
                           </Tooltip>
                         </TooltipProvider>
-                        
+
                         <TooltipProvider>
                           <Tooltip>
                             <TooltipTrigger asChild>
@@ -224,7 +231,7 @@ export function AITagSuggestions({
             className="text-xs text-muted-foreground hover:text-foreground"
           >
             <Sparkles className="h-3 w-3 mr-1" />
-            {isGenerating ? 'Thinking...' : 'Regenerate'}
+            {isGenerating ? "Thinking..." : "Regenerate"}
           </Button>
         </div>
       </CardContent>
@@ -235,7 +242,7 @@ export function AITagSuggestions({
 // Add the AI suggestions to the image modal
 export function AITagSuggestionsWrapper({ imageId }: { imageId: string }) {
   const { images } = useAppStore();
-  const image = images.find(img => img.id === imageId);
+  const image = images.find((img) => img.id === imageId);
 
   if (!image) return null;
 

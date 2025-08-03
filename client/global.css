@@ -209,20 +209,52 @@
 
   /* Neon theme multi-color backgrounds */
   .theme-neon {
-    background: 
-      radial-gradient(circle at 20% 80%, hsla(120, 100%, 50%, 0.15) 0%, transparent 50%),
-      radial-gradient(circle at 80% 20%, hsla(300, 100%, 50%, 0.15) 0%, transparent 50%),
-      radial-gradient(circle at 40% 40%, hsla(60, 100%, 50%, 0.1) 0%, transparent 50%),
-      radial-gradient(circle at 60% 80%, hsla(240, 100%, 50%, 0.1) 0%, transparent 50%),
+    background:
+      radial-gradient(
+        circle at 20% 80%,
+        hsla(120, 100%, 50%, 0.15) 0%,
+        transparent 50%
+      ),
+      radial-gradient(
+        circle at 80% 20%,
+        hsla(300, 100%, 50%, 0.15) 0%,
+        transparent 50%
+      ),
+      radial-gradient(
+        circle at 40% 40%,
+        hsla(60, 100%, 50%, 0.1) 0%,
+        transparent 50%
+      ),
+      radial-gradient(
+        circle at 60% 80%,
+        hsla(240, 100%, 50%, 0.1) 0%,
+        transparent 50%
+      ),
       hsl(var(--background));
   }
 
   .theme-neon .bg-background {
-    background: 
-      radial-gradient(circle at 20% 80%, hsla(120, 100%, 50%, 0.15) 0%, transparent 50%),
-      radial-gradient(circle at 80% 20%, hsla(300, 100%, 50%, 0.15) 0%, transparent 50%),
-      radial-gradient(circle at 40% 40%, hsla(60, 100%, 50%, 0.1) 0%, transparent 50%),
-      radial-gradient(circle at 60% 80%, hsla(240, 100%, 50%, 0.1) 0%, transparent 50%),
+    background:
+      radial-gradient(
+        circle at 20% 80%,
+        hsla(120, 100%, 50%, 0.15) 0%,
+        transparent 50%
+      ),
+      radial-gradient(
+        circle at 80% 20%,
+        hsla(300, 100%, 50%, 0.15) 0%,
+        transparent 50%
+      ),
+      radial-gradient(
+        circle at 40% 40%,
+        hsla(60, 100%, 50%, 0.1) 0%,
+        transparent 50%
+      ),
+      radial-gradient(
+        circle at 60% 80%,
+        hsla(240, 100%, 50%, 0.1) 0%,
+        transparent 50%
+      ),
       hsl(var(--background));
   }
 
@@ -232,7 +264,7 @@
   }
 
   .theme-neon .shadow-glow {
-    box-shadow: 
+    box-shadow:
       0 0 20px hsla(var(--neon-primary), 0.6),
       0 0 40px hsla(var(--neon-secondary), 0.4),
       0 0 60px hsla(var(--neon-tertiary), 0.2);
@@ -240,8 +272,9 @@
 
   /* Cyberpunk border gradients */
   .theme-cyberpunk .border-gradient {
-    background: linear-gradient(45deg, 
-      hsl(var(--cyberpunk-pink)), 
+    background: linear-gradient(
+      45deg,
+      hsl(var(--cyberpunk-pink)),
       hsl(var(--cyberpunk-blue))
     );
     padding: 1px;
@@ -253,7 +286,8 @@
 
   /* Gold theme metallic effects */
   .theme-gold .metallic-shine {
-    background: linear-gradient(135deg, 
+    background: linear-gradient(
+      135deg,
       hsla(45, 93%, 47%, 0.1) 0%,
       hsla(45, 93%, 60%, 0.2) 25%,
       hsla(45, 93%, 47%, 0.1) 50%,
@@ -264,26 +298,25 @@
 
   /* Enhanced button styles for themes */
   .theme-neon .btn-primary {
-    background: linear-gradient(45deg, 
-      hsl(var(--neon-primary)), 
+    background: linear-gradient(
+      45deg,
+      hsl(var(--neon-primary)),
       hsl(var(--neon-secondary))
     );
     box-shadow: 0 0 20px hsla(var(--neon-primary), 0.5);
   }
 
   .theme-cyberpunk .btn-primary {
-    background: linear-gradient(45deg, 
-      hsl(var(--cyberpunk-pink)), 
+    background: linear-gradient(
+      45deg,
+      hsl(var(--cyberpunk-pink)),
       hsl(var(--cyberpunk-blue))
     );
     box-shadow: 0 0 20px hsla(var(--cyberpunk-pink), 0.5);
   }
 
   .theme-gold .btn-primary {
-    background: linear-gradient(45deg, 
-      hsl(var(--gold)), 
-      hsla(45, 93%, 60%, 1)
-    );
+    background: linear-gradient(45deg, hsl(var(--gold)), hsla(45, 93%, 60%, 1));
     box-shadow: 0 0 20px hsla(var(--gold), 0.4);
   }
 
@@ -294,15 +327,17 @@
 
   /* Theme-specific scrollbars */
   .theme-neon ::-webkit-scrollbar-thumb {
-    background: linear-gradient(45deg, 
-      hsl(var(--neon-primary)), 
+    background: linear-gradient(
+      45deg,
+      hsl(var(--neon-primary)),
       hsl(var(--neon-secondary))
     );
   }
 
   .theme-cyberpunk ::-webkit-scrollbar-thumb {
-    background: linear-gradient(45deg, 
-      hsl(var(--cyberpunk-pink)), 
+    background: linear-gradient(
+      45deg,
+      hsl(var(--cyberpunk-pink)),
       hsl(var(--cyberpunk-blue))
     );
   }
@@ -320,17 +355,17 @@
 
   @keyframes neon-glow {
     0% {
-      box-shadow: 
+      box-shadow:
         0 0 20px hsla(var(--neon-primary), 0.6),
         0 0 40px hsla(var(--neon-secondary), 0.4);
     }
     50% {
-      box-shadow: 
+      box-shadow:
         0 0 30px hsla(var(--neon-secondary), 0.8),
         0 0 50px hsla(var(--neon-tertiary), 0.5);
     }
     100% {
-      box-shadow: 
+      box-shadow:
         0 0 25px hsla(var(--neon-quaternary), 0.7),
         0 0 45px hsla(var(--neon-primary), 0.4);
     }

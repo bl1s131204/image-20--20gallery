@@ -86,12 +86,14 @@ export default {
             height: "0",
           },
         },
-        "glow": {
+        glow: {
           "0%, 100%": {
-            boxShadow: "0 0 20px hsl(var(--neon-primary)), 0 0 40px hsl(var(--neon-secondary))",
+            boxShadow:
+              "0 0 20px hsl(var(--neon-primary)), 0 0 40px hsl(var(--neon-secondary))",
           },
           "50%": {
-            boxShadow: "0 0 30px hsl(var(--neon-secondary)), 0 0 50px hsl(var(--neon-tertiary))",
+            boxShadow:
+              "0 0 30px hsl(var(--neon-secondary)), 0 0 50px hsl(var(--neon-tertiary))",
           },
         },
         "neon-pulse": {
@@ -126,16 +128,18 @@ export default {
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
-        "glow": "glow 2s ease-in-out infinite alternate",
+        glow: "glow 2s ease-in-out infinite alternate",
         "neon-pulse": "neon-pulse 3s ease-in-out infinite",
         "cyberpunk-flicker": "cyberpunk-flicker 2s ease-in-out infinite",
         "bounce-soft": "bounce-soft 0.3s ease-out",
       },
       boxShadow: {
-        "glow": "0 0 20px hsl(var(--neon-primary)), 0 0 40px hsl(var(--neon-secondary))",
-        "glow-lg": "0 0 30px hsl(var(--neon-primary)), 0 0 50px hsl(var(--neon-secondary)), 0 0 70px hsl(var(--neon-tertiary))",
+        glow: "0 0 20px hsl(var(--neon-primary)), 0 0 40px hsl(var(--neon-secondary))",
+        "glow-lg":
+          "0 0 30px hsl(var(--neon-primary)), 0 0 50px hsl(var(--neon-secondary)), 0 0 70px hsl(var(--neon-tertiary))",
         "glow-neon": "0 0 20px hsl(var(--neon-glow))",
-        "glow-cyberpunk": "0 0 20px hsl(var(--cyberpunk-pink)), 0 0 40px hsl(var(--cyberpunk-blue))",
+        "glow-cyberpunk":
+          "0 0 20px hsl(var(--cyberpunk-pink)), 0 0 40px hsl(var(--cyberpunk-blue))",
         "glow-gold": "0 0 20px hsl(var(--gold))",
       },
     },

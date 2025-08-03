@@ -1,19 +1,19 @@
-import React, { useState, useRef } from 'react';
-import { Search, Filter, Grid, List, Plus, Palette } from 'lucide-react';
-import { Link } from 'react-router-dom';
-import { useTheme } from './ThemeProvider';
-import { useAppStore } from '@/lib/store';
-import { SortControls } from './SortControls';
-import { GoogleDriveImport } from './GoogleDriveImport';
-import { Button } from './ui/button';
-import { Input } from './ui/input';
+import React, { useState, useRef } from "react";
+import { Search, Filter, Grid, List, Plus, Palette } from "lucide-react";
+import { Link } from "react-router-dom";
+import { useTheme } from "./ThemeProvider";
+import { useAppStore } from "@/lib/store";
+import { SortControls } from "./SortControls";
+import { GoogleDriveImport } from "./GoogleDriveImport";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuTrigger
-} from './ui/dropdown-menu';
-import { Badge } from './ui/badge';
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
+import { Badge } from "./ui/badge";
 
 export function Header() {
   const { theme, setTheme, themes } = useTheme();
@@ -26,7 +26,7 @@ export function Header() {
     folders,
     selectedFolder,
     setSelectedFolder,
-    addImages
+    addImages,
   } = useAppStore();
 
   const [searchFocused, setSearchFocused] = useState(false);
@@ -47,7 +47,9 @@ export function Header() {
           <div className="flex items-center gap-4">
             <Link to="/" className="flex items-center gap-2">
               <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
-                <span className="text-primary-foreground font-bold text-sm">TG</span>
+                <span className="text-primary-foreground font-bold text-sm">
+                  TG
+                </span>
               </div>
               <h1 className="font-bold text-lg hidden sm:block">TagEngine</h1>
             </Link>
@@ -64,9 +66,11 @@ export function Header() {
 
           {/* Search Bar */}
           <div className="flex-1 max-w-2xl mx-4">
-            <div className={`relative transition-all duration-200 ${
-              searchFocused ? 'scale-105' : ''
-            }`}>
+            <div
+              className={`relative transition-all duration-200 ${
+                searchFocused ? "scale-105" : ""
+              }`}
+            >
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 placeholder="Search images, tags, folders..."
@@ -75,17 +79,15 @@ export function Header() {
                 onFocus={() => setSearchFocused(true)}
                 onBlur={() => setSearchFocused(false)}
                 className={`pl-10 transition-all duration-200 ${
-                  theme === 'neon' ? 'shadow-glow' : ''
-                } ${
-                  theme === 'cyberpunk' ? 'border-cyberpunk-pink/50' : ''
-                }`}
+                  theme === "neon" ? "shadow-glow" : ""
+                } ${theme === "cyberpunk" ? "border-cyberpunk-pink/50" : ""}`}
               />
               {searchQuery && (
                 <Button
                   variant="ghost"
                   size="sm"
                   className="absolute right-2 top-1/2 -translate-y-1/2 h-6 w-6 p-0"
-                  onClick={() => setSearchQuery('')}
+                  onClick={() => setSearchQuery("")}
                 >
                   ×
                 </Button>
@@ -101,7 +103,7 @@ export function Header() {
               size="sm"
               onClick={toggleFilters}
               className={`transition-all duration-200 ${
-                theme === 'neon' && showFilters ? 'animate-glow' : ''
+                theme === "neon" && showFilters ? "animate-glow" : ""
               }`}
             >
               <Filter className="h-4 w-4" />
@@ -119,10 +121,10 @@ export function Header() {
                 <Button variant="outline" size="sm">
                   <Grid className="h-4 w-4" />
                   <span className="hidden sm:inline ml-2">
-                    {selectedFolder 
-                      ? folders.find(f => f.id === selectedFolder)?.name || 'Folder'
-                      : 'All Folders'
-                    }
+                    {selectedFolder
+                      ? folders.find((f) => f.id === selectedFolder)?.name ||
+                        "Folder"
+                      : "All Folders"}
                   </span>
                 </Button>
               </DropdownMenuTrigger>
@@ -131,9 +133,9 @@ export function Header() {
                   <Grid className="h-4 w-4 mr-2" />
                   All Folders
                 </DropdownMenuItem>
-                {folders.map(folder => (
-                  <DropdownMenuItem 
-                    key={folder.id} 
+                {folders.map((folder) => (
+                  <DropdownMenuItem
+                    key={folder.id}
                     onClick={() => setSelectedFolder(folder.id)}
                   >
                     <span className="w-4 h-4 mr-2 flex-shrink-0">📁</span>
@@ -159,7 +161,7 @@ export function Header() {
                   <DropdownMenuItem
                     key={themeOption.value}
                     onClick={() => setTheme(themeOption.value)}
-                    className={theme === themeOption.value ? 'bg-accent' : ''}
+                    className={theme === themeOption.value ? "bg-accent" : ""}
                   >
                     <span className="mr-2">{themeOption.icon}</span>
                     {themeOption.label}
