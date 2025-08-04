@@ -455,6 +455,13 @@ export function LinkedFolders() {
                         <span className="font-medium text-sm truncate">
                           {folder.name}
                         </span>
+                        {/* Privacy indicator for private folders */}
+                        {folder.isPrivate && (
+                          <Badge variant="secondary" className="text-xs bg-orange-100 text-orange-700 dark:bg-orange-900 dark:text-orange-300">
+                            <Lock className="h-3 w-3 mr-1" />
+                            Private
+                          </Badge>
+                        )}
                         {getStatusIcon(folder.id)}
                       </div>
 
