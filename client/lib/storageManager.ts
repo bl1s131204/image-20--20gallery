@@ -6,12 +6,17 @@ export interface StoredImageData extends Omit<ImageData, 'dateAdded'> {
   isFavorite?: boolean;
   userNotes?: string;
   lastViewed?: string;
+  userId?: string; // Owner of the image
+  isPrivate?: boolean; // Privacy setting
 }
 
 export interface StoredFolderData extends Omit<FolderData, 'dateCreated' | 'lastViewed'> {
   dateCreated: string;
   lastViewed?: string;
   folderType: 'local' | 'google_drive' | 'custom';
+  isPrivate?: boolean;
+  userId?: string; // Owner of the folder
+  sharedWith?: string[]; // User IDs with access
   metadata?: {
     originalPath?: string;
     driveUrl?: string;
@@ -39,7 +44,7 @@ export interface StoredAppData {
 
 // Database configuration
 const DB_NAME = "TagEngineAppData";
-const DB_VERSION = 2;
+const DB_VERSION = 3;
 const IMAGES_STORE = "images";
 const FOLDERS_STORE = "folders";
 const TAG_VARIANTS_STORE = "tagVariants";
@@ -47,6 +52,7 @@ const SESSION_STORE = "sessionData";
 const PREFERENCES_STORE = "userPreferences";
 const LINKED_FOLDERS_STORE = "linkedFolders";
 const FOLDER_HANDLES_STORE = "folderHandles";
+const USER_DATA_STORE = "userData";
 
 let db: IDBDatabase | null = null;
 
@@ -69,6 +75,8 @@ export async function initializeAppDatabase(): Promise<void> {
         const imageStore = database.createObjectStore(IMAGES_STORE, { keyPath: "id" });
         imageStore.createIndex("folderId", "folder", { unique: false });
         imageStore.createIndex("dateAdded", "dateAdded", { unique: false });
+        imageStore.createIndex("userId", "userId", { unique: false });
+        imageStore.createIndex("isPrivate", "isPrivate", { unique: false });
       }
 
       // Folders store
@@ -76,6 +84,8 @@ export async function initializeAppDatabase(): Promise<void> {
         const folderStore = database.createObjectStore(FOLDERS_STORE, { keyPath: "id" });
         folderStore.createIndex("folderType", "folderType", { unique: false });
         folderStore.createIndex("dateCreated", "dateCreated", { unique: false });
+        folderStore.createIndex("userId", "userId", { unique: false });
+        folderStore.createIndex("isPrivate", "isPrivate", { unique: false });
       }
 
       // Tag variants store
@@ -101,6 +111,12 @@ export async function initializeAppDatabase(): Promise<void> {
       // Folder handles store (for local folder handles)
       if (!database.objectStoreNames.contains(FOLDER_HANDLES_STORE)) {
         database.createObjectStore(FOLDER_HANDLES_STORE, { keyPath: "id" });
+      }
+
+      // User data store (for user-specific storage)
+      if (!database.objectStoreNames.contains(USER_DATA_STORE)) {
+        const userStore = database.createObjectStore(USER_DATA_STORE, { keyPath: "userId" });
+        userStore.createIndex("lastAccessed", "lastAccessed", { unique: false });
       }
     };
   });
@@ -356,6 +372,155 @@ export function scheduleAutoSave(saveFunction: () => void, delay: number = 2000)
     saveFunction();
     autoSaveTimeout = null;
   }, delay);
+}
+
+// User-specific data access functions
+export async function getUserImages(userId: string, includePrivate: boolean = true): Promise<ImageData[]> {
+  if (!db) await initializeAppDatabase();
+
+  const transaction = db!.transaction([IMAGES_STORE], "readonly");
+  const store = transaction.objectStore(IMAGES_STORE);
+  const index = store.index("userId");
+  const request = index.getAll(userId);
+
+  return new Promise((resolve, reject) => {
+    request.onsuccess = () => {
+      const storedImages: StoredImageData[] = request.result || [];
+      const filteredImages = includePrivate
+        ? storedImages
+        : storedImages.filter(img => !img.isPrivate);
+
+      const images = filteredImages.map(stored => ({
+        ...stored,
+        dateAdded: new Date(stored.dateAdded),
+      }));
+
+      resolve(images);
+    };
+    request.onerror = () => reject(request.error);
+  });
+}
+
+export async function getUserFolders(userId: string, includePrivate: boolean = true): Promise<FolderData[]> {
+  if (!db) await initializeAppDatabase();
+
+  const transaction = db!.transaction([FOLDERS_STORE], "readonly");
+  const store = transaction.objectStore(FOLDERS_STORE);
+  const index = store.index("userId");
+  const request = index.getAll(userId);
+
+  return new Promise((resolve, reject) => {
+    request.onsuccess = () => {
+      const storedFolders: StoredFolderData[] = request.result || [];
+      const filteredFolders = includePrivate
+        ? storedFolders
+        : storedFolders.filter(folder => !folder.isPrivate);
+
+      const folders = filteredFolders.map(stored => ({
+        id: stored.id,
+        name: stored.name,
+        images: stored.images,
+        userDefined: stored.userDefined,
+      }));
+
+      resolve(folders);
+    };
+    request.onerror = () => reject(request.error);
+  });
+}
+
+export async function saveUserFolder(folder: FolderData, userId: string, isPrivate: boolean = false, folderType: 'local' | 'google_drive' | 'custom' = 'custom', metadata?: any): Promise<void> {
+  const storedFolder: StoredFolderData = {
+    ...folder,
+    dateCreated: new Date().toISOString(),
+    lastViewed: new Date().toISOString(),
+    folderType,
+    isPrivate,
+    userId,
+    metadata,
+  };
+  return storeData(FOLDERS_STORE, storedFolder);
+}
+
+export async function saveUserImage(image: ImageData, userId: string, isPrivate: boolean = false): Promise<void> {
+  const storedImage: StoredImageData = {
+    ...image,
+    dateAdded: image.dateAdded.toISOString(),
+    lastViewed: new Date().toISOString(),
+    userId,
+    isPrivate,
+  };
+  return storeData(IMAGES_STORE, storedImage);
+}
+
+export async function toggleImagePrivacy(imageId: string, isPrivate: boolean): Promise<void> {
+  if (!db) await initializeAppDatabase();
+
+  const transaction = db!.transaction([IMAGES_STORE], "readwrite");
+  const store = transaction.objectStore(IMAGES_STORE);
+  const getRequest = store.get(imageId);
+
+  return new Promise((resolve, reject) => {
+    getRequest.onsuccess = () => {
+      const image = getRequest.result;
+      if (image) {
+        image.isPrivate = isPrivate;
+        const putRequest = store.put(image);
+        putRequest.onsuccess = () => resolve();
+        putRequest.onerror = () => reject(putRequest.error);
+      } else {
+        reject(new Error("Image not found"));
+      }
+    };
+    getRequest.onerror = () => reject(getRequest.error);
+  });
+}
+
+export async function toggleFolderPrivacy(folderId: string, isPrivate: boolean): Promise<void> {
+  if (!db) await initializeAppDatabase();
+
+  const transaction = db!.transaction([FOLDERS_STORE], "readwrite");
+  const store = transaction.objectStore(FOLDERS_STORE);
+  const getRequest = store.get(folderId);
+
+  return new Promise((resolve, reject) => {
+    getRequest.onsuccess = () => {
+      const folder = getRequest.result;
+      if (folder) {
+        folder.isPrivate = isPrivate;
+        const putRequest = store.put(folder);
+        putRequest.onsuccess = () => resolve();
+        putRequest.onerror = () => reject(putRequest.error);
+      } else {
+        reject(new Error("Folder not found"));
+      }
+    };
+    getRequest.onerror = () => reject(getRequest.error);
+  });
+}
+
+export async function loadUserAppData(userId: string): Promise<{
+  images: ImageData[];
+  folders: FolderData[];
+  tagVariants: TagVariant[];
+  sessionData: any;
+  userPreferences: any;
+}> {
+  const [images, folders, tagVariants, sessionData, userPreferences] = await Promise.all([
+    getUserImages(userId),
+    getUserFolders(userId),
+    loadTagVariants(),
+    loadSessionData(),
+    loadUserPreferences(),
+  ]);
+
+  return {
+    images,
+    folders,
+    tagVariants,
+    sessionData,
+    userPreferences,
+  };
 }
 
 // Export database instance for backward compatibility
