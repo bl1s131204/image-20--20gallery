@@ -370,4 +370,38 @@
         0 0 45px hsla(var(--neon-primary), 0.4);
     }
   }
+
+  /* Smooth animation utilities for image grid */
+  .hover\:scale-102:hover {
+    transform: scale(1.02);
+  }
+
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes slide-in-from-bottom {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-in {
+    animation-duration: 0.3s;
+    animation-timing-function: ease-out;
+  }
+
+  .fade-in-0 {
+    animation-name: fade-in;
+  }
+
+  .slide-in-from-bottom-4 {
+    animation-name: slide-in-from-bottom;
+  }
 }
