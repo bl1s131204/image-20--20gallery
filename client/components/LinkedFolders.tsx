@@ -76,7 +76,9 @@ export function LinkedFolders() {
   >({});
   const [showActionDialog, setShowActionDialog] = useState(false);
   const [pendingFolder, setPendingFolder] = useState<LinkedFolder | null>(null);
-  const [folderAction, setFolderAction] = useState<"replace" | "combine">("combine");
+  const [folderAction, setFolderAction] = useState<"replace" | "combine">(
+    "combine",
+  );
 
   // Initialize and load folders
   useEffect(() => {
@@ -544,11 +546,17 @@ export function LinkedFolders() {
           <AlertDialogHeader>
             <AlertDialogTitle>Load Folder Images</AlertDialogTitle>
             <AlertDialogDescription>
-              You currently have {currentImages.length} images loaded. What would you like to do with the images from "{pendingFolder?.name}"?
+              You currently have {currentImages.length} images loaded. What
+              would you like to do with the images from "{pendingFolder?.name}"?
             </AlertDialogDescription>
           </AlertDialogHeader>
           <div className="py-4">
-            <Select value={folderAction} onValueChange={(value: "replace" | "combine") => setFolderAction(value)}>
+            <Select
+              value={folderAction}
+              onValueChange={(value: "replace" | "combine") =>
+                setFolderAction(value)
+              }
+            >
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
@@ -556,20 +564,26 @@ export function LinkedFolders() {
                 <SelectItem value="combine">
                   <div className="flex flex-col items-start">
                     <span className="font-medium">Combine</span>
-                    <span className="text-xs text-muted-foreground">Add new images to existing ones</span>
+                    <span className="text-xs text-muted-foreground">
+                      Add new images to existing ones
+                    </span>
                   </div>
                 </SelectItem>
                 <SelectItem value="replace">
                   <div className="flex flex-col items-start">
                     <span className="font-medium">Replace</span>
-                    <span className="text-xs text-muted-foreground">Remove current images and add new ones</span>
+                    <span className="text-xs text-muted-foreground">
+                      Remove current images and add new ones
+                    </span>
                   </div>
                 </SelectItem>
               </SelectContent>
             </Select>
           </div>
           <AlertDialogFooter>
-            <AlertDialogCancel onClick={() => setPendingFolder(null)}>Cancel</AlertDialogCancel>
+            <AlertDialogCancel onClick={() => setPendingFolder(null)}>
+              Cancel
+            </AlertDialogCancel>
             <AlertDialogAction onClick={handleConfirmAction}>
               {folderAction === "replace" ? "Replace Images" : "Add Images"}
             </AlertDialogAction>
