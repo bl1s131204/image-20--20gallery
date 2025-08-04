@@ -10,6 +10,8 @@ import {
   Check,
   X,
   Image as ImageIcon,
+  Lock,
+  Unlock,
 } from "lucide-react";
 import { useTheme } from "./ThemeProvider";
 import { useAppStore } from "@/lib/store";
@@ -80,6 +82,10 @@ export function LinkedFolders() {
     "combine",
   );
   const [showIframeWarning, setShowIframeWarning] = useState(false);
+  const [isLocked, setIsLocked] = useState(true);
+  const [showPasswordDialog, setShowPasswordDialog] = useState(false);
+  const [password, setPassword] = useState("");
+  const [passwordError, setPasswordError] = useState("");
 
   // Initialize and load folders
   useEffect(() => {
@@ -119,6 +125,11 @@ export function LinkedFolders() {
   };
 
   const handleLinkFolder = async () => {
+    if (isLocked) {
+      setShowPasswordDialog(true);
+      return;
+    }
+
     if (!isFileSystemAccessSupported()) {
       // Check if it's because of iframe
       if (window.self !== window.top) {
@@ -218,6 +229,42 @@ export function LinkedFolders() {
     setPendingFolder(null);
   };
 
+  const handlePasswordSubmit = () => {
+    if (password === "1590") {
+      setIsLocked(false);
+      setShowPasswordDialog(false);
+      setPassword("");
+      setPasswordError("");
+      toast({
+        title: "Unlocked",
+        description: "Linked folders access granted",
+      });
+    } else {
+      setPasswordError("Incorrect password");
+      setPassword("");
+    }
+  };
+
+  const handleLockToggle = () => {
+    if (isLocked) {
+      setShowPasswordDialog(true);
+    } else {
+      setIsLocked(true);
+      toast({
+        title: "Locked",
+        description: "Linked folders access restricted",
+      });
+    }
+  };
+
+  const checkLockAccess = (action: () => void) => {
+    if (isLocked) {
+      setShowPasswordDialog(true);
+    } else {
+      action();
+    }
+  };
+
   const handleRenameFolder = async () => {
     if (!editingFolder || !newFolderName.trim()) return;
 
@@ -295,37 +342,81 @@ export function LinkedFolders() {
         <div className="flex items-center gap-2">
           <HardDrive className="h-5 w-5 text-primary" />
           <h3 className="font-semibold">Linked Folders</h3>
+          {isLocked && (
+            <Lock className="h-4 w-4 text-muted-foreground" />
+          )}
         </div>
 
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleLinkFolder}
-                disabled={isLoading}
-                className={`${
-                  theme === "neon" ? "hover:shadow-glow-neon" : ""
-                } ${
-                  theme === "cyberpunk"
-                    ? "border-cyberpunk-blue/50 hover:border-cyberpunk-pink"
-                    : ""
-                }`}
-              >
-                <FolderPlus className="h-4 w-4 mr-2" />
-                Link Folder
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Link a local folder to access its images</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+        <div className="flex items-center gap-2">
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleLockToggle}
+                  className={`h-8 w-8 p-0 ${
+                    isLocked
+                      ? "text-red-500 hover:text-red-600"
+                      : "text-green-500 hover:text-green-600"
+                  }`}
+                >
+                  {isLocked ? (
+                    <Lock className="h-4 w-4" />
+                  ) : (
+                    <Unlock className="h-4 w-4" />
+                  )}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>{isLocked ? "Unlock folder access" : "Lock folder access"}</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleLinkFolder}
+                  disabled={isLoading || isLocked}
+                  className={`${
+                    theme === "neon" ? "hover:shadow-glow-neon" : ""
+                  } ${
+                    theme === "cyberpunk"
+                      ? "border-cyberpunk-blue/50 hover:border-cyberpunk-pink"
+                      : ""
+                  } ${isLocked ? "opacity-50 cursor-not-allowed" : ""}`}
+                >
+                  <FolderPlus className="h-4 w-4 mr-2" />
+                  Link Folder
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>{isLocked ? "Unlock to link folders" : "Link a local folder to access its images"}</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
       </div>
 
       {/* Folder List */}
-      <ScrollArea className="max-h-80">
+      <ScrollArea className="max-h-80 relative">
+        {isLocked && (
+          <div className="absolute inset-0 bg-background/80 backdrop-blur-sm z-10 flex items-center justify-center">
+            <div className="text-center">
+              <Lock className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
+              <p className="text-sm text-muted-foreground">
+                Folder access is locked
+              </p>
+              <p className="text-xs text-muted-foreground">
+                Click the lock icon to unlock
+              </p>
+            </div>
+          </div>
+        )}
         {linkedFolders.length === 0 ? (
           <div className="text-center py-8">
             <HardDrive className="h-12 w-12 mx-auto text-muted-foreground/50 mb-3" />
@@ -403,10 +494,11 @@ export function LinkedFolders() {
                             <Button
                               variant="ghost"
                               size="sm"
-                              onClick={() => handleViewFolder(folder)}
+                              onClick={() => checkLockAccess(() => handleViewFolder(folder))}
                               disabled={
                                 isLoading ||
-                                folderStatus[folder.id] === "invalid"
+                                folderStatus[folder.id] === "invalid" ||
+                                isLocked
                               }
                               className="h-8 w-8 p-0"
                             >
@@ -425,8 +517,8 @@ export function LinkedFolders() {
                             <Button
                               variant="ghost"
                               size="sm"
-                              onClick={() => checkFolderAccess(folder)}
-                              disabled={folderStatus[folder.id] === "checking"}
+                              onClick={() => checkLockAccess(() => checkFolderAccess(folder))}
+                              disabled={folderStatus[folder.id] === "checking" || isLocked}
                               className="h-8 w-8 p-0"
                             >
                               <RefreshCw
@@ -450,10 +542,11 @@ export function LinkedFolders() {
                             <Button
                               variant="ghost"
                               size="sm"
-                              onClick={() => {
+                              onClick={() => checkLockAccess(() => {
                                 setEditingFolder(folder);
                                 setNewFolderName(folder.name);
-                              }}
+                              })}
+                              disabled={isLocked}
                               className="h-8 w-8 p-0"
                             >
                               <Edit className="h-4 w-4" />
@@ -471,10 +564,11 @@ export function LinkedFolders() {
                             <Button
                               variant="ghost"
                               size="sm"
-                              onClick={() => {
+                              onClick={() => checkLockAccess(() => {
                                 setDeletingFolder(folder);
                                 setShowDeleteDialog(true);
-                              }}
+                              })}
+                              disabled={isLocked}
                               className="h-8 w-8 p-0 text-destructive hover:text-destructive"
                             >
                               <Trash2 className="h-4 w-4" />
@@ -628,6 +722,58 @@ export function LinkedFolders() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Password Dialog */}
+      <Dialog open={showPasswordDialog} onOpenChange={setShowPasswordDialog}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <div className="flex items-center gap-2">
+              <Lock className="h-5 w-5 text-primary" />
+              <DialogTitle>Enter Password</DialogTitle>
+            </div>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <p className="text-sm text-muted-foreground mb-3">
+                Enter the password to access linked folders functionality.
+              </p>
+              <Input
+                type="password"
+                placeholder="Password"
+                value={password}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  setPasswordError("");
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    handlePasswordSubmit();
+                  }
+                }}
+                className={passwordError ? "border-destructive" : ""}
+              />
+              {passwordError && (
+                <p className="text-sm text-destructive mt-1">{passwordError}</p>
+              )}
+            </div>
+            <div className="flex justify-end gap-2">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setShowPasswordDialog(false);
+                  setPassword("");
+                  setPasswordError("");
+                }}
+              >
+                Cancel
+              </Button>
+              <Button onClick={handlePasswordSubmit}>
+                Unlock
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
 
     </div>
   );
