@@ -511,28 +511,79 @@ export function LinkedFolders() {
                     </div>
 
                     <div className="flex items-center gap-1 ml-2">
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
+                      {/* Special controls for private folders */}
+                      {folder.isPrivate && (
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
                             <Button
                               variant="ghost"
                               size="sm"
-                              onClick={() => checkLockAccess(() => handleViewFolder(folder))}
-                              disabled={
-                                isLoading ||
-                                folderStatus[folder.id] === "invalid" ||
-                                isLocked
-                              }
-                              className="h-8 w-8 p-0"
+                              className="h-8 w-8 p-0 hover:bg-red-50 hover:text-red-600"
                             >
-                              <Eye className="h-4 w-4" />
+                              <MoreVertical className="h-4 w-4" />
                             </Button>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p>Load folder images</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end" className="w-48">
+                            <DropdownMenuItem
+                              onClick={() => handleViewFolder(folder)}
+                              disabled={isLoading || folderStatus[folder.id] === "invalid"}
+                            >
+                              <Eye className="h-4 w-4 mr-2" />
+                              View Images
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={() => {
+                                setEditingFolder(folder);
+                                setNewFolderName(folder.name);
+                              }}
+                            >
+                              <Edit className="h-4 w-4 mr-2" />
+                              Rename Folder
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem
+                              onClick={() => handleDeletePrivateFolder(folder)}
+                              className="text-red-600 focus:text-red-600 focus:bg-red-50"
+                            >
+                              <Trash2 className="h-4 w-4 mr-2" />
+                              Delete Private Folder
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={() => handleDeletePrivateFolder(folder)}
+                              className="text-red-700 focus:text-red-700 focus:bg-red-100"
+                            >
+                              <AlertOctagon className="h-4 w-4 mr-2" />
+                              Permanently Remove
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      )}
+
+                      {/* Regular folder controls */}
+                      {!folder.isPrivate && (
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => checkLockAccess(() => handleViewFolder(folder))}
+                                disabled={
+                                  isLoading ||
+                                  folderStatus[folder.id] === "invalid" ||
+                                  isLocked
+                                }
+                                className="h-8 w-8 p-0"
+                              >
+                                <Eye className="h-4 w-4" />
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>Load folder images</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      )}
 
                       <TooltipProvider>
                         <Tooltip>
