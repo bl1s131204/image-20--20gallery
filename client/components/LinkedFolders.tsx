@@ -661,6 +661,25 @@ export function LinkedFolders() {
                                 <Button
                                   variant="ghost"
                                   size="sm"
+                                  onClick={() => handleTogglePrivacy(folder)}
+                                  disabled={isLocked}
+                                  className="h-8 w-8 p-0 text-orange-600 hover:text-orange-700 hover:bg-orange-50"
+                                >
+                                  <Shield className="h-4 w-4" />
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>Make private</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
                                   onClick={() => checkLockAccess(() => {
                                     setDeletingFolder(folder);
                                     setShowDeleteDialog(true);
