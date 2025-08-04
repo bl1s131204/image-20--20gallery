@@ -43,6 +43,13 @@ import {
   AlertDialogTitle,
 } from "./ui/alert-dialog";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select";
+import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
@@ -52,7 +59,7 @@ import { toast } from "./ui/use-toast";
 
 export function LinkedFolders() {
   const { theme } = useTheme();
-  const { addImages, images: currentImages } = useAppStore();
+  const { addImages, images: currentImages, clearImages } = useAppStore();
   const [linkedFolders, setLinkedFolders] = useState<LinkedFolder[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedFolder, setSelectedFolder] = useState<LinkedFolder | null>(
@@ -67,6 +74,9 @@ export function LinkedFolders() {
   const [folderStatus, setFolderStatus] = useState<
     Record<string, "valid" | "invalid" | "checking">
   >({});
+  const [showActionDialog, setShowActionDialog] = useState(false);
+  const [pendingFolder, setPendingFolder] = useState<LinkedFolder | null>(null);
+  const [folderAction, setFolderAction] = useState<"replace" | "combine">("combine");
 
   // Initialize and load folders
   useEffect(() => {
@@ -140,6 +150,18 @@ export function LinkedFolders() {
   };
 
   const handleViewFolder = async (folder: LinkedFolder) => {
+    // If there are existing images, ask user what to do
+    if (currentImages.length > 0) {
+      setPendingFolder(folder);
+      setShowActionDialog(true);
+      return;
+    }
+
+    // If no existing images, just load the folder
+    await loadFolderImages(folder);
+  };
+
+  const loadFolderImages = async (folder: LinkedFolder) => {
     setIsLoading(true);
     try {
       const folderImages = await readFolderImages(folder);
@@ -172,6 +194,18 @@ export function LinkedFolders() {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleConfirmAction = async () => {
+    if (!pendingFolder) return;
+
+    if (folderAction === "replace") {
+      clearImages();
+    }
+
+    await loadFolderImages(pendingFolder);
+    setShowActionDialog(false);
+    setPendingFolder(null);
   };
 
   const handleRenameFolder = async () => {
@@ -499,6 +533,45 @@ export function LinkedFolders() {
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
               Unlink
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Folder Action Dialog */}
+      <AlertDialog open={showActionDialog} onOpenChange={setShowActionDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Load Folder Images</AlertDialogTitle>
+            <AlertDialogDescription>
+              You currently have {currentImages.length} images loaded. What would you like to do with the images from "{pendingFolder?.name}"?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <div className="py-4">
+            <Select value={folderAction} onValueChange={(value: "replace" | "combine") => setFolderAction(value)}>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="combine">
+                  <div className="flex flex-col items-start">
+                    <span className="font-medium">Combine</span>
+                    <span className="text-xs text-muted-foreground">Add new images to existing ones</span>
+                  </div>
+                </SelectItem>
+                <SelectItem value="replace">
+                  <div className="flex flex-col items-start">
+                    <span className="font-medium">Replace</span>
+                    <span className="text-xs text-muted-foreground">Remove current images and add new ones</span>
+                  </div>
+                </SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setPendingFolder(null)}>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleConfirmAction}>
+              {folderAction === "replace" ? "Replace Images" : "Add Images"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
