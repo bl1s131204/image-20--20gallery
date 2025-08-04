@@ -13,7 +13,7 @@ import { TagsSidebar } from "./components/TagsSidebar";
 import { ImageGrid } from "./components/ImageGrid";
 import { initializeAppData, useAppStore } from "./lib/store";
 import { useAuthStore } from "./lib/authStore";
-import { initializeDemoUsers } from "./lib/demoUsers";
+
 import { useEffect } from "react";
 import Index from "./pages/Index";
 import FolderSelection from "./pages/FolderSelection";
@@ -28,8 +28,7 @@ function AppContent() {
   useEffect(() => {
     const initApp = async () => {
       try {
-        // Initialize demo users for testing
-        await initializeDemoUsers();
+
 
         // Check authentication session first
         await checkSession();
