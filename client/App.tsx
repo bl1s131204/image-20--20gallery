@@ -11,7 +11,7 @@ import { Header } from "./components/Header";
 import { FilterSidebar } from "./components/FilterSidebar";
 import { TagsSidebar } from "./components/TagsSidebar";
 import { ImageGrid } from "./components/ImageGrid";
-import { initializeMockData } from "./lib/store";
+import { initializeAppData } from "./lib/store";
 import { useEffect } from "react";
 import Index from "./pages/Index";
 import FolderSelection from "./pages/FolderSelection";
@@ -21,7 +21,16 @@ const queryClient = new QueryClient();
 
 function AppContent() {
   useEffect(() => {
-    initializeMockData();
+    const initApp = async () => {
+      try {
+        await initializeAppData();
+        console.log("App initialized successfully");
+      } catch (error) {
+        console.error("Failed to initialize app:", error);
+      }
+    };
+
+    initApp();
   }, []);
 
   return (
