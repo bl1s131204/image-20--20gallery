@@ -219,6 +219,9 @@ export function Header() {
             {/* Google Drive Import */}
             <GoogleDriveImport />
 
+            {/* Data Manager */}
+            <DataManager />
+
             {/* Link Local Folder Button */}
             {isFileSystemAccessSupported() && (
               <Button
