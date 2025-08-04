@@ -7,6 +7,7 @@ import {
   Plus,
   Palette,
   HardDrive,
+  User,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useTheme } from "./ThemeProvider";
@@ -14,6 +15,9 @@ import { useAppStore } from "@/lib/store";
 import { SortControls } from "./SortControls";
 import { GoogleDriveImport } from "./GoogleDriveImport";
 import { DataManager } from "./DataManager";
+import { AuthModal } from "./AuthModal";
+import { UserProfile } from "./UserProfile";
+import { useAuthStore } from "@/lib/authStore";
 import {
   linkLocalFolder,
   isFileSystemAccessSupported,
@@ -235,15 +239,32 @@ export function Header() {
               </Button>
             )}
 
-            {/* Add Images Button */}
-            <Button
-              size="sm"
-              className="hidden sm:flex"
-              onClick={() => fileInputRef.current?.click()}
-            >
-              <Plus className="h-4 w-4 mr-2" />
-              Add Images
-            </Button>
+            {/* Authentication Controls */}
+            {isAuthenticated ? (
+              <>
+                {/* Add Images Button (for authenticated users) */}
+                <Button
+                  size="sm"
+                  className="hidden sm:flex"
+                  onClick={() => fileInputRef.current?.click()}
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add Images
+                </Button>
+
+                {/* User Profile */}
+                <UserProfile />
+              </>
+            ) : (
+              <Button
+                variant="default"
+                size="sm"
+                onClick={() => setShowAuthModal(true)}
+              >
+                <User className="h-4 w-4 mr-2" />
+                Sign In
+              </Button>
+            )}
 
             {/* Hidden file input */}
             <input
@@ -257,6 +278,13 @@ export function Header() {
           </div>
         </div>
       </div>
+
+      {/* Authentication Modal */}
+      <AuthModal
+        isOpen={showAuthModal}
+        onOpenChange={setShowAuthModal}
+        defaultMode="login"
+      />
     </header>
   );
 }
