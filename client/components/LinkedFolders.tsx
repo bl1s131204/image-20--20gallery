@@ -591,22 +591,7 @@ export function LinkedFolders() {
         </AlertDialogContent>
       </AlertDialog>
 
-      {/* Browser Support Warning */}
-      {!isFileSystemAccessSupported() && (
-        <Card className="border-yellow-200 bg-yellow-50 dark:border-yellow-800 dark:bg-yellow-950">
-          <CardContent className="p-3">
-            <div className="flex items-start gap-2">
-              <AlertTriangle className="h-4 w-4 text-yellow-600 dark:text-yellow-400 mt-0.5" />
-              <div className="text-sm text-yellow-800 dark:text-yellow-200">
-                <p className="font-medium mb-1">
-                  Local Folder Linking Unavailable
-                </p>
-                <p className="text-xs">{getFileSystemAccessError()}</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      )}
+
     </div>
   );
 }
