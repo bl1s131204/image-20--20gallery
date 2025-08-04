@@ -22,7 +22,7 @@ export interface AuthState {
   isLoading: boolean;
   
   // Actions
-  login: (credentials: { username: string; password: string }) => Promise<boolean>;
+  login: (credentials: { userId: string }) => Promise<boolean>;
   register: (userData: { username: string; email: string; password: string; displayName: string }) => Promise<boolean>;
   logout: () => void;
   updateUser: (updates: Partial<User>) => void;
@@ -107,61 +107,82 @@ export const useAuthStore = create<AuthState>()(
 
       login: async (credentials) => {
         set({ isLoading: true });
-        
-        try {
-          const users = getStoredUsers();
-          const user = users.find(
-            u => (u.username === credentials.username || u.email === credentials.username) &&
-                 u.password === hashPassword(credentials.password)
-          );
 
-          if (!user) {
-            set({ isLoading: false });
-            return false;
+        try {
+          // Special case: direct login with user ID "1312yoga"
+          if (credentials.userId === "1312yoga") {
+            const users = getStoredUsers();
+            let user = users.find(u => u.username === "1312yoga");
+
+            // Create the user if it doesn't exist
+            if (!user) {
+              const newUser: StoredUser = {
+                id: "user_1312yoga",
+                username: "1312yoga",
+                email: "1312yoga@tagengine.demo",
+                displayName: "Yoga Master",
+                password: "", // No password needed
+                createdAt: new Date().toISOString(),
+                lastLogin: new Date().toISOString(),
+                preferences: {
+                  theme: "light",
+                  defaultView: "grid",
+                  autoSave: true,
+                },
+              };
+              users.push(newUser);
+              saveStoredUsers(users);
+              user = newUser;
+            }
+
+            // Update last login
+            const updatedUsers = users.map(u =>
+              u.id === user!.id
+                ? { ...u, lastLogin: new Date().toISOString() }
+                : u
+            );
+            saveStoredUsers(updatedUsers);
+
+            // Create session
+            const token = generateToken();
+            const sessions = getStoredSessions();
+            const newSession: UserSession = {
+              userId: user.id,
+              token,
+              expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
+              isActive: true,
+            };
+            sessions.push(newSession);
+            saveStoredSessions(sessions);
+
+            // Convert to User format
+            const authenticatedUser: User = {
+              id: user.id,
+              username: user.username,
+              email: user.email,
+              displayName: user.displayName,
+              avatar: user.avatar,
+              createdAt: new Date(user.createdAt),
+              lastLogin: new Date(user.lastLogin),
+              preferences: user.preferences,
+            };
+
+            set({
+              user: authenticatedUser,
+              isAuthenticated: true,
+              isLoading: false,
+            });
+
+            // Store session token
+            localStorage.setItem('auth_token', token);
+
+            return true;
           }
 
-          // Update last login
-          const updatedUsers = users.map(u => 
-            u.id === user.id 
-              ? { ...u, lastLogin: new Date().toISOString() }
-              : u
-          );
-          saveStoredUsers(updatedUsers);
+          // For any other user ID, return false
+          set({ isLoading: false });
+          return false;
 
-          // Create session
-          const token = generateToken();
-          const sessions = getStoredSessions();
-          const newSession: UserSession = {
-            userId: user.id,
-            token,
-            expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
-            isActive: true,
-          };
-          sessions.push(newSession);
-          saveStoredSessions(sessions);
-
-          // Convert to User format
-          const authenticatedUser: User = {
-            id: user.id,
-            username: user.username,
-            email: user.email,
-            displayName: user.displayName,
-            avatar: user.avatar,
-            createdAt: new Date(user.createdAt),
-            lastLogin: new Date(user.lastLogin),
-            preferences: user.preferences,
-          };
-
-          set({
-            user: authenticatedUser,
-            isAuthenticated: true,
-            isLoading: false,
-          });
-
-          // Store session token
-          localStorage.setItem('auth_token', token);
-          
-          return true;
         } catch (error) {
           console.error('Login error:', error);
           set({ isLoading: false });
