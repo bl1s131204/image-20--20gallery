@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 import {
   ImageData,
   FolderData,
@@ -9,6 +10,13 @@ import {
   normalizeAndGroupTags,
   sortImages,
 } from "./tagEngine";
+import {
+  initializeAppDatabase,
+  saveAppData,
+  loadAppData,
+  saveSessionData,
+  scheduleAutoSave,
+} from "./storageManager";
 
 interface AppState {
   // Images and folders
@@ -45,6 +53,12 @@ interface AppState {
   // Computed
   getFilteredImages: () => ImageData[];
   refreshTagVariants: () => void;
+
+  // Persistence
+  saveToStorage: () => Promise<void>;
+  loadFromStorage: () => Promise<void>;
+  isLoaded: boolean;
+  setLoaded: (loaded: boolean) => void;
 }
 
 // Mock image data for demonstration - empty by default
@@ -63,6 +77,7 @@ export const useAppStore = create<AppState>()((set, get) => ({
   sortField: "relevance",
   sortDirection: "desc",
   showFilters: false,
+  isLoaded: false,
 
   // Actions
   addImages: (files: File[]) => {
@@ -94,6 +109,9 @@ export const useAppStore = create<AppState>()((set, get) => ({
     }));
 
     get().refreshTagVariants();
+
+    // Auto-save after adding images
+    scheduleAutoSave(() => get().saveToStorage());
   },
 
   removeImage: (id: string) => {
@@ -105,6 +123,9 @@ export const useAppStore = create<AppState>()((set, get) => ({
       })),
     }));
     get().refreshTagVariants();
+
+    // Auto-save after removing image
+    scheduleAutoSave(() => get().saveToStorage());
   },
 
   updateImage: (id: string, updates: Partial<ImageData>) => {
@@ -120,6 +141,9 @@ export const useAppStore = create<AppState>()((set, get) => ({
       images: [],
       tagVariants: [],
     }));
+
+    // Auto-save after clearing images
+    scheduleAutoSave(() => get().saveToStorage());
   },
 
   createFolder: (name: string) => {
@@ -133,6 +157,9 @@ export const useAppStore = create<AppState>()((set, get) => ({
     set((state) => ({
       folders: [...state.folders, newFolder],
     }));
+
+    // Auto-save after creating folder
+    scheduleAutoSave(() => get().saveToStorage());
   },
 
   deleteFolder: (id: string) => {
@@ -140,6 +167,9 @@ export const useAppStore = create<AppState>()((set, get) => ({
       folders: state.folders.filter((folder) => folder.id !== id),
       selectedFolder: state.selectedFolder === id ? null : state.selectedFolder,
     }));
+
+    // Auto-save after deleting folder
+    scheduleAutoSave(() => get().saveToStorage());
   },
 
   renameFolder: (id: string, name: string) => {
@@ -148,6 +178,9 @@ export const useAppStore = create<AppState>()((set, get) => ({
         folder.id === id ? { ...folder, name } : folder,
       ),
     }));
+
+    // Auto-save after renaming folder
+    scheduleAutoSave(() => get().saveToStorage());
   },
 
   addImageToFolder: (imageId: string, folderId: string) => {
@@ -268,12 +301,71 @@ export const useAppStore = create<AppState>()((set, get) => ({
       }),
     }));
   },
+
+  // Persistence functions
+  saveToStorage: async () => {
+    const state = get();
+    try {
+      await saveAppData({
+        images: state.images,
+        folders: state.folders,
+        tagVariants: state.tagVariants,
+        sessionData: {
+          selectedFolder: state.selectedFolder,
+          searchQuery: state.searchQuery,
+          selectedTags: state.selectedTags,
+          sortField: state.sortField,
+          sortDirection: state.sortDirection,
+        },
+      });
+    } catch (error) {
+      console.error("Failed to save app data:", error);
+    }
+  },
+
+  loadFromStorage: async () => {
+    try {
+      await initializeAppDatabase();
+      const data = await loadAppData();
+
+      set({
+        images: data.images,
+        folders: data.folders,
+        tagVariants: data.tagVariants,
+        selectedFolder: data.sessionData?.selectedFolder || null,
+        searchQuery: data.sessionData?.searchQuery || "",
+        selectedTags: data.sessionData?.selectedTags || [],
+        sortField: (data.sessionData?.sortField as SortField) || "relevance",
+        sortDirection: (data.sessionData?.sortDirection as SortDirection) || "desc",
+        isLoaded: true,
+      });
+
+      console.log("App data loaded from storage:", {
+        images: data.images.length,
+        folders: data.folders.length,
+        tagVariants: data.tagVariants.length,
+      });
+    } catch (error) {
+      console.error("Failed to load app data:", error);
+      set({ isLoaded: true }); // Set loaded even if failed to prevent blocking UI
+    }
+  },
+
+  setLoaded: (loaded: boolean) => {
+    set({ isLoaded: loaded });
+  },
 }));
 
-// Initialize with mock data if empty
-export function initializeMockData() {
+// Initialize app data from storage
+export async function initializeAppData() {
   const store = useAppStore.getState();
-  if (store.images.length === 0) {
+
+  if (!store.isLoaded) {
+    await store.loadFromStorage();
+  }
+
+  // If no data was loaded (fresh install), initialize with mock data
+  if (store.images.length === 0 && store.folders.length === 0) {
     const mockImages = createMockImages();
     const mockFolders = createMockFolders();
 
@@ -296,5 +388,13 @@ export function initializeMockData() {
     });
 
     store.refreshTagVariants();
+
+    // Save the initial data
+    await store.saveToStorage();
   }
+}
+
+// Legacy function for backward compatibility
+export function initializeMockData() {
+  initializeAppData();
 }
