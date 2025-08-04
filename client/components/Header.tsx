@@ -46,10 +46,20 @@ export function Header() {
     selectedFolder,
     setSelectedFolder,
     addImages,
+    loadUserData,
   } = useAppStore();
+  const { user, isAuthenticated } = useAuthStore();
 
   const [searchFocused, setSearchFocused] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Load user data when authenticated
+  useEffect(() => {
+    if (user && isAuthenticated) {
+      loadUserData(user.id);
+    }
+  }, [user, isAuthenticated, loadUserData]);
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files || []);
