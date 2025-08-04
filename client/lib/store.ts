@@ -28,6 +28,7 @@ interface AppState {
   addImages: (files: File[]) => void;
   removeImage: (id: string) => void;
   updateImage: (id: string, updates: Partial<ImageData>) => void;
+  clearImages: () => void;
 
   createFolder: (name: string) => void;
   deleteFolder: (id: string) => void;
@@ -111,6 +112,13 @@ export const useAppStore = create<AppState>()((set, get) => ({
       images: state.images.map((img) =>
         img.id === id ? { ...img, ...updates } : img,
       ),
+    }));
+  },
+
+  clearImages: () => {
+    set(() => ({
+      images: [],
+      tagVariants: [],
     }));
   },
 
