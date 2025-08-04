@@ -281,6 +281,26 @@ export function LinkedFolders() {
     setShowDeleteDialog(true);
   };
 
+  const handleTogglePrivacy = async (folder: LinkedFolder) => {
+    try {
+      const updatedFolders = linkedFolders.map(f =>
+        f.id === folder.id ? { ...f, isPrivate: !f.isPrivate } : f
+      );
+      setLinkedFolders(updatedFolders);
+
+      toast({
+        title: folder.isPrivate ? "Folder Made Public" : "Folder Made Private",
+        description: `"${folder.name}" is now ${folder.isPrivate ? "public" : "private"}`,
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to change folder privacy",
+        variant: "destructive",
+      });
+    }
+  };
+
   const handleRenameFolder = async () => {
     if (!editingFolder || !newFolderName.trim()) return;
 
