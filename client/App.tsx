@@ -12,6 +12,7 @@ import { FilterSidebar } from "./components/FilterSidebar";
 import { TagsSidebar } from "./components/TagsSidebar";
 import { ImageGrid } from "./components/ImageGrid";
 import { initializeAppData, useAppStore } from "./lib/store";
+import { useAuthStore } from "./lib/authStore";
 import { useEffect } from "react";
 import Index from "./pages/Index";
 import FolderSelection from "./pages/FolderSelection";
@@ -21,10 +22,15 @@ const queryClient = new QueryClient();
 
 function AppContent() {
   const { isLoaded } = useAppStore();
+  const { checkSession, isAuthenticated } = useAuthStore();
 
   useEffect(() => {
     const initApp = async () => {
       try {
+        // Check authentication session first
+        await checkSession();
+
+        // Initialize app data (will load user-specific data if authenticated)
         await initializeAppData();
         console.log("App initialized successfully");
       } catch (error) {
