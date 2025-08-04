@@ -11,7 +11,7 @@ import { Header } from "./components/Header";
 import { FilterSidebar } from "./components/FilterSidebar";
 import { TagsSidebar } from "./components/TagsSidebar";
 import { ImageGrid } from "./components/ImageGrid";
-import { initializeAppData } from "./lib/store";
+import { initializeAppData, useAppStore } from "./lib/store";
 import { useEffect } from "react";
 import Index from "./pages/Index";
 import FolderSelection from "./pages/FolderSelection";
@@ -20,6 +20,8 @@ import NotFound from "./pages/NotFound";
 const queryClient = new QueryClient();
 
 function AppContent() {
+  const { isLoaded } = useAppStore();
+
   useEffect(() => {
     const initApp = async () => {
       try {
@@ -32,6 +34,18 @@ function AppContent() {
 
     initApp();
   }, []);
+
+  // Show loading screen while initializing
+  if (!isLoaded) {
+    return (
+      <div className="min-h-screen bg-background text-foreground flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <div className="animate-spin h-8 w-8 border-4 border-primary border-r-transparent rounded-full mx-auto"></div>
+          <p className="text-muted-foreground">Loading your gallery...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background text-foreground">
