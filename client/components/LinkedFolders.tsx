@@ -741,20 +741,49 @@ export function LinkedFolders() {
       <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Unlink Folder</AlertDialogTitle>
+            <div className="flex items-center gap-2">
+              {deletingFolder?.isPrivate ? (
+                <AlertOctagon className="h-5 w-5 text-red-600" />
+              ) : (
+                <Trash2 className="h-5 w-5 text-destructive" />
+              )}
+              <AlertDialogTitle>
+                {deletingFolder?.isPrivate ? "Delete Private Folder" : "Unlink Folder"}
+              </AlertDialogTitle>
+            </div>
             <AlertDialogDescription>
-              Are you sure you want to unlink "{deletingFolder?.name}"? This
-              will remove the folder from your linked folders list, but won't
-              delete any files from your computer.
+              {deletingFolder?.isPrivate ? (
+                <>
+                  Are you sure you want to permanently delete the private folder "{deletingFolder?.name}"?
+                  <br />
+                  <br />
+                  <span className="text-red-600 font-medium">
+                    ⚠️ This action cannot be undone. The folder and all its private content will be removed from the system.
+                  </span>
+                  <br />
+                  <br />
+                  Files on your computer will remain safe, but the folder's privacy settings and associations will be lost.
+                </>
+              ) : (
+                <>
+                  Are you sure you want to unlink "{deletingFolder?.name}"? This
+                  will remove the folder from your linked folders list, but won't
+                  delete any files from your computer.
+                </>
+              )}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDeleteFolder}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              className={`${
+                deletingFolder?.isPrivate
+                  ? "bg-red-600 text-white hover:bg-red-700"
+                  : "bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              }`}
             >
-              Unlink
+              {deletingFolder?.isPrivate ? "Delete Forever" : "Unlink"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
