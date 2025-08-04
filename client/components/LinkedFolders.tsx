@@ -119,6 +119,13 @@ export function LinkedFolders() {
 
   const handleLinkFolder = async () => {
     if (!isFileSystemAccessSupported()) {
+      // Check if it's because of iframe
+      if (window.self !== window.top) {
+        setShowIframeWarning(true);
+        return;
+      }
+
+      // Other reasons (non-iframe)
       toast({
         title: "Cannot Link Folder",
         description: getFileSystemAccessError(),
