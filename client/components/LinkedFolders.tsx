@@ -265,6 +265,12 @@ export function LinkedFolders() {
     }
   };
 
+  const handleDeletePrivateFolder = (folder: LinkedFolder) => {
+    // Allow deletion of private folders without lock check
+    setDeletingFolder(folder);
+    setShowDeleteDialog(true);
+  };
+
   const handleRenameFolder = async () => {
     if (!editingFolder || !newFolderName.trim()) return;
 
