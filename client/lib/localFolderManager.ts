@@ -8,6 +8,7 @@ export interface LinkedFolder {
   imageCount: number;
   dateLinked: Date;
   lastAccessed: Date;
+  isPrivate?: boolean;
 }
 
 export interface StoredLinkedFolder {
@@ -17,6 +18,7 @@ export interface StoredLinkedFolder {
   imageCount: number;
   dateLinked: string;
   lastAccessed: string;
+  isPrivate?: boolean;
 }
 
 // Check if we're in an iframe
