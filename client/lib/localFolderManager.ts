@@ -230,7 +230,7 @@ export async function linkLocalFolder(): Promise<LinkedFolder | null> {
 
     // Read folder contents to get image files and count
     const imageFiles: string[] = [];
-    const supportedTypes = [".jpg", ".jpeg", ".png", ".webp", ".gif", ".bmp"];
+    const supportedTypes = [".jpg", ".jpeg", ".png", ".webp", ".gif", ".bmp", ".avif", ".tiff", ".tif", ".svg"];
 
     for await (const [name, fileHandle] of handle.entries()) {
       if (fileHandle.kind === "file") {
@@ -278,7 +278,7 @@ export async function readFolderImages(
     }
 
     const images: ImageData[] = [];
-    const supportedTypes = [".jpg", ".jpeg", ".png", ".webp", ".gif", ".bmp"];
+    const supportedTypes = [".jpg", ".jpeg", ".png", ".webp", ".gif", ".bmp", ".avif", ".tiff", ".tif", ".svg"];
 
     for await (const [name, fileHandle] of folder.handle.entries()) {
       if (fileHandle.kind === "file") {
@@ -382,7 +382,7 @@ export async function getFolderStats(
 
     let imageCount = 0;
     let lastModified = new Date(0);
-    const supportedTypes = [".jpg", ".jpeg", ".png", ".webp", ".gif", ".bmp"];
+    const supportedTypes = [".jpg", ".jpeg", ".png", ".webp", ".gif", ".bmp", ".avif", ".tiff", ".tif", ".svg"];
 
     for await (const [name, fileHandle] of folder.handle.entries()) {
       if (fileHandle.kind === "file") {
