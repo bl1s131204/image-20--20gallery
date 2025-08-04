@@ -79,6 +79,7 @@ export function LinkedFolders() {
   const [folderAction, setFolderAction] = useState<"replace" | "combine">(
     "combine",
   );
+  const [showIframeWarning, setShowIframeWarning] = useState(false);
 
   // Initialize and load folders
   useEffect(() => {
