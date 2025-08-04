@@ -13,6 +13,7 @@ import { useTheme } from "./ThemeProvider";
 import { useAppStore } from "@/lib/store";
 import { SortControls } from "./SortControls";
 import { GoogleDriveImport } from "./GoogleDriveImport";
+import { DataManager } from "./DataManager";
 import {
   linkLocalFolder,
   isFileSystemAccessSupported,
