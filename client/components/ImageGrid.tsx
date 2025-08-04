@@ -243,7 +243,7 @@ export function ImageGrid() {
                 Drag and drop images here, or click to browse
               </p>
               <p className="text-muted-foreground text-xs mt-1">
-                Supports JPG, PNG, WebP, and GIF
+                Supports JPG, PNG, WebP, GIF, AVIF, TIFF, and SVG
               </p>
             </div>
           </div>
