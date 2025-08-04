@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Cloud, Link, AlertCircle, CheckCircle, Loader2 } from "lucide-react";
 import { useAppStore } from "@/lib/store";
 import { parseGoogleDriveLink, processImageTags } from "@/lib/tagEngine";
+import { saveFolder } from "@/lib/storageManager";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
@@ -114,7 +115,32 @@ export function GoogleDriveImport() {
     }
   };
 
-  const confirmImport = () => {
+  const confirmImport = async () => {
+    // Create a Google Drive folder entry
+    const folderId = parseGoogleDriveLink(driveUrl);
+    const driveFolderId = `drive_${folderId}`;
+
+    // Save Google Drive folder to storage
+    try {
+      await saveFolder(
+        {
+          id: driveFolderId,
+          name: `Google Drive Folder`,
+          images: previewFiles.map(f => f.id),
+          userDefined: false,
+        },
+        'google_drive',
+        {
+          driveUrl: driveUrl,
+          folderId: folderId,
+          isPublic: true,
+          dateLinked: new Date().toISOString(),
+        }
+      );
+    } catch (error) {
+      console.error("Failed to save Google Drive folder:", error);
+    }
+
     // Convert Google Drive files to ImageData format
     const imageFiles = previewFiles.map((file, index) => {
       const imageId = Date.now().toString() + index;
@@ -131,6 +157,7 @@ export function GoogleDriveImport() {
         name: file.name,
         title,
         url: file.webContentLink || file.thumbnailLink,
+        folder: driveFolderId, // Associate with Google Drive folder
         size: parseInt(file.size),
         type: file.mimeType,
         dateAdded: new Date(),
