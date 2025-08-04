@@ -16,7 +16,7 @@ export function SortControls() {
   const { searchQuery } = useAppStore();
 
   const sortOptions: { field: SortField; label: string }[] = [
-    { field: "relevance", label: "Sort By" },
+    { field: "relevance", label: "Relevance" },
     { field: "title", label: "Title" },
     { field: "name", label: "File Name" },
     { field: "tags", label: "Tag Count" },
