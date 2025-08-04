@@ -12,6 +12,9 @@ import {
   Image as ImageIcon,
   Lock,
   Unlock,
+  MoreVertical,
+  Shield,
+  AlertOctagon,
 } from "lucide-react";
 import { useTheme } from "./ThemeProvider";
 import { useAppStore } from "@/lib/store";
