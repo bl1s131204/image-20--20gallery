@@ -1,11 +1,6 @@
 import React, { useState } from "react";
 import {
   User,
-  Mail,
-  Lock,
-  Eye,
-  EyeOff,
-  UserPlus,
   LogIn,
   AlertCircle,
   CheckCircle,
@@ -35,8 +30,7 @@ export function AuthModal({ isOpen, onOpenChange, defaultMode = 'login' }: AuthM
   const { theme } = useTheme();
   const { login, register, isLoading } = useAuthStore();
   
-  const [mode, setMode] = useState<'login' | 'register'>(defaultMode);
-  const [showPassword, setShowPassword] = useState(false);
+
   const [formData, setFormData] = useState({
     userId: "",
   });
@@ -49,10 +43,7 @@ export function AuthModal({ isOpen, onOpenChange, defaultMode = 'login' }: AuthM
     setSuccess("");
   };
 
-  const handleModeSwitch = (newMode: 'login' | 'register') => {
-    setMode(newMode);
-    resetForm();
-  };
+
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
