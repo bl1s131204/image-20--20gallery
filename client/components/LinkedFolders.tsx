@@ -585,85 +585,79 @@ export function LinkedFolders() {
                         </TooltipProvider>
                       )}
 
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => checkLockAccess(() => checkFolderAccess(folder))}
-                              disabled={folderStatus[folder.id] === "checking" || isLocked}
-                              className="h-8 w-8 p-0"
-                            >
-                              <RefreshCw
-                                className={`h-4 w-4 ${
-                                  folderStatus[folder.id] === "checking"
-                                    ? "animate-spin"
-                                    : ""
-                                }`}
-                              />
-                            </Button>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p>Check folder access</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
+                      {/* Regular folder controls (only for non-private folders) */}
+                      {!folder.isPrivate && (
+                        <>
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => checkLockAccess(() => checkFolderAccess(folder))}
+                                  disabled={folderStatus[folder.id] === "checking" || isLocked}
+                                  className="h-8 w-8 p-0"
+                                >
+                                  <RefreshCw
+                                    className={`h-4 w-4 ${
+                                      folderStatus[folder.id] === "checking"
+                                        ? "animate-spin"
+                                        : ""
+                                    }`}
+                                  />
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>Check folder access</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
 
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => checkLockAccess(() => {
-                                setEditingFolder(folder);
-                                setNewFolderName(folder.name);
-                              })}
-                              disabled={isLocked}
-                              className="h-8 w-8 p-0"
-                            >
-                              <Edit className="h-4 w-4" />
-                            </Button>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p>Rename folder</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => checkLockAccess(() => {
+                                    setEditingFolder(folder);
+                                    setNewFolderName(folder.name);
+                                  })}
+                                  disabled={isLocked}
+                                  className="h-8 w-8 p-0"
+                                >
+                                  <Edit className="h-4 w-4" />
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>Rename folder</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
 
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => {
-                                // Allow direct deletion for private folders, otherwise check lock
-                                if (folder.isPrivate) {
-                                  handleDeletePrivateFolder(folder);
-                                } else {
-                                  checkLockAccess(() => {
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => checkLockAccess(() => {
                                     setDeletingFolder(folder);
                                     setShowDeleteDialog(true);
-                                  });
-                                }
-                              }}
-                              disabled={isLocked && !folder.isPrivate}
-                              className={`h-8 w-8 p-0 ${
-                                folder.isPrivate
-                                  ? "text-red-600 hover:text-red-700 hover:bg-red-50"
-                                  : "text-destructive hover:text-destructive"
-                              }`}
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p>{folder.isPrivate ? "Delete private folder" : "Unlink folder"}</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
+                                  })}
+                                  disabled={isLocked}
+                                  className="h-8 w-8 p-0 text-destructive hover:text-destructive"
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>Unlink folder</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                        </>
+                      )}
                     </div>
                   </div>
                 </CardContent>
