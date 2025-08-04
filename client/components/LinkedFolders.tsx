@@ -577,18 +577,29 @@ export function LinkedFolders() {
                             <Button
                               variant="ghost"
                               size="sm"
-                              onClick={() => checkLockAccess(() => {
-                                setDeletingFolder(folder);
-                                setShowDeleteDialog(true);
-                              })}
-                              disabled={isLocked}
-                              className="h-8 w-8 p-0 text-destructive hover:text-destructive"
+                              onClick={() => {
+                                // Allow direct deletion for private folders, otherwise check lock
+                                if (folder.isPrivate) {
+                                  handleDeletePrivateFolder(folder);
+                                } else {
+                                  checkLockAccess(() => {
+                                    setDeletingFolder(folder);
+                                    setShowDeleteDialog(true);
+                                  });
+                                }
+                              }}
+                              disabled={isLocked && !folder.isPrivate}
+                              className={`h-8 w-8 p-0 ${
+                                folder.isPrivate
+                                  ? "text-red-600 hover:text-red-700 hover:bg-red-50"
+                                  : "text-destructive hover:text-destructive"
+                              }`}
                             >
                               <Trash2 className="h-4 w-4" />
                             </Button>
                           </TooltipTrigger>
                           <TooltipContent>
-                            <p>Unlink folder</p>
+                            <p>{folder.isPrivate ? "Delete private folder" : "Unlink folder"}</p>
                           </TooltipContent>
                         </Tooltip>
                       </TooltipProvider>
