@@ -18,7 +18,7 @@ export function SortControls() {
   const sortOptions: { field: SortField; label: string }[] = [
     { field: "relevance", label: "Relevance" },
     { field: "title", label: "Title" },
-    { field: "name", label: "File Name" },
+    { field: "name", label: "Name" },
     { field: "tags", label: "Tag Count" },
     { field: "date", label: "Date Added" },
     { field: "size", label: "File Size" },
@@ -33,14 +33,19 @@ export function SortControls() {
     setSorting(field, sortDirection);
   };
 
+  const getCurrentLabel = () => {
+    const option = sortOptions.find((opt) => opt.field === sortField);
+    const directionIcon = sortDirection === "asc" ? "▲" : "▼";
+    return option ? `Sort By: ${option.label} ${directionIcon}` : "Sort By";
+  };
+
   return (
     <div className="flex items-center gap-2">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="outline" size="sm">
+          <Button variant="outline" size="sm" className="min-w-fit">
             <ArrowUpDown className="h-4 w-4 mr-2" />
-            {sortOptions.find((opt) => opt.field === sortField)?.label ||
-              "Sort"}
+            <span className="transition-all duration-200">{getCurrentLabel()}</span>
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
@@ -54,14 +59,23 @@ export function SortControls() {
               <DropdownMenuItem
                 key={option.field}
                 onClick={() => changeSortField(option.field)}
-                className={sortField === option.field ? "bg-accent" : ""}
+                className={`transition-colors duration-200 ${sortField === option.field ? "bg-accent" : ""}`}
               >
-                {option.label}
-                {option.field === "relevance" && searchQuery && (
-                  <span className="ml-auto text-xs text-muted-foreground">
-                    for "{searchQuery}"
-                  </span>
-                )}
+                <div className="flex items-center justify-between w-full">
+                  <span>{option.label}</span>
+                  <div className="flex items-center gap-2">
+                    {option.field === "relevance" && searchQuery && (
+                      <span className="text-xs text-muted-foreground">
+                        for "{searchQuery}"
+                      </span>
+                    )}
+                    {sortField === option.field && (
+                      <span className="text-xs">
+                        {sortDirection === "asc" ? "▲" : "▼"}
+                      </span>
+                    )}
+                  </div>
+                </div>
               </DropdownMenuItem>
             );
           })}
@@ -72,7 +86,8 @@ export function SortControls() {
         variant="outline"
         size="sm"
         onClick={toggleDirection}
-        className="transition-transform duration-200 hover:scale-105"
+        className="transition-all duration-200 hover:scale-105 hover:bg-accent"
+        title={`Sort ${sortDirection === "asc" ? "Descending" : "Ascending"}`}
       >
         {sortDirection === "asc" ? (
           <ChevronUp className="h-4 w-4" />

@@ -50,9 +50,9 @@ function ImageCard({ image, onView, onFullscreen }: ImageCardProps) {
 
   return (
     <Card
-      className={`group relative overflow-hidden transition-all duration-300 cursor-pointer ${
-        isHovered ? "animate-bounce-soft" : ""
-      } ${theme === "neon" ? "hover:shadow-glow" : "hover:shadow-lg"} ${
+      className={`group relative overflow-hidden transition-all duration-300 cursor-pointer hover:scale-102 ${
+        theme === "neon" ? "hover:shadow-glow" : "hover:shadow-lg"
+      } ${
         theme === "cyberpunk"
           ? "border-cyberpunk-pink/30 hover:border-cyberpunk-blue"
           : ""
@@ -263,20 +263,28 @@ export function ImageGrid() {
   return (
     <>
       <div
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 p-4"
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 p-4 transition-all duration-300 ease-in-out"
         onDrop={handleDrop}
         onDragOver={handleDragOver}
       >
         {images.map((image, index) => (
-          <ImageCard
+          <div
             key={image.id}
-            image={image}
-            onView={setSelectedImage}
-            onFullscreen={(img) => {
-              setFullscreenImage(img);
-              setCurrentImageIndex(index);
+            className="transition-all duration-300 ease-in-out animate-in fade-in-0 slide-in-from-bottom-4"
+            style={{
+              animationDelay: `${index * 50}ms`,
+              animationFillMode: 'both'
             }}
-          />
+          >
+            <ImageCard
+              image={image}
+              onView={setSelectedImage}
+              onFullscreen={(img) => {
+                setFullscreenImage(img);
+                setCurrentImageIndex(index);
+              }}
+            />
+          </div>
         ))}
       </div>
 
