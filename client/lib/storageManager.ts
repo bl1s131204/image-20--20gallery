@@ -1,0 +1,362 @@
+import { ImageData, FolderData, TagVariant } from "./tagEngine";
+
+// Enhanced interfaces for persistence
+export interface StoredImageData extends Omit<ImageData, 'dateAdded'> {
+  dateAdded: string; // ISO string for serialization
+  isFavorite?: boolean;
+  userNotes?: string;
+  lastViewed?: string;
+}
+
+export interface StoredFolderData extends Omit<FolderData, 'dateCreated' | 'lastViewed'> {
+  dateCreated: string;
+  lastViewed?: string;
+  folderType: 'local' | 'google_drive' | 'custom';
+  metadata?: {
+    originalPath?: string;
+    driveUrl?: string;
+    description?: string;
+  };
+}
+
+export interface StoredAppData {
+  images: StoredImageData[];
+  folders: StoredFolderData[];
+  tagVariants: TagVariant[];
+  lastSession: {
+    selectedFolder: string | null;
+    searchQuery: string;
+    selectedTags: string[];
+    sortField: string;
+    sortDirection: string;
+  };
+  userPreferences: {
+    theme: string;
+    defaultView: string;
+    autoSave: boolean;
+  };
+}
+
+// Database configuration
+const DB_NAME = "TagEngineAppData";
+const DB_VERSION = 2;
+const IMAGES_STORE = "images";
+const FOLDERS_STORE = "folders";
+const TAG_VARIANTS_STORE = "tagVariants";
+const SESSION_STORE = "sessionData";
+const PREFERENCES_STORE = "userPreferences";
+const LINKED_FOLDERS_STORE = "linkedFolders";
+const FOLDER_HANDLES_STORE = "folderHandles";
+
+let db: IDBDatabase | null = null;
+
+// Initialize the enhanced database
+export async function initializeAppDatabase(): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open(DB_NAME, DB_VERSION);
+
+    request.onerror = () => reject(request.error);
+    request.onsuccess = () => {
+      db = request.result;
+      resolve();
+    };
+
+    request.onupgradeneeded = (event) => {
+      const database = (event.target as IDBOpenDBRequest).result;
+
+      // Images store
+      if (!database.objectStoreNames.contains(IMAGES_STORE)) {
+        const imageStore = database.createObjectStore(IMAGES_STORE, { keyPath: "id" });
+        imageStore.createIndex("folderId", "folder", { unique: false });
+        imageStore.createIndex("dateAdded", "dateAdded", { unique: false });
+      }
+
+      // Folders store
+      if (!database.objectStoreNames.contains(FOLDERS_STORE)) {
+        const folderStore = database.createObjectStore(FOLDERS_STORE, { keyPath: "id" });
+        folderStore.createIndex("folderType", "folderType", { unique: false });
+        folderStore.createIndex("dateCreated", "dateCreated", { unique: false });
+      }
+
+      // Tag variants store
+      if (!database.objectStoreNames.contains(TAG_VARIANTS_STORE)) {
+        database.createObjectStore(TAG_VARIANTS_STORE, { keyPath: "canonical" });
+      }
+
+      // Session data store
+      if (!database.objectStoreNames.contains(SESSION_STORE)) {
+        database.createObjectStore(SESSION_STORE, { keyPath: "key" });
+      }
+
+      // User preferences store
+      if (!database.objectStoreNames.contains(PREFERENCES_STORE)) {
+        database.createObjectStore(PREFERENCES_STORE, { keyPath: "key" });
+      }
+
+      // Linked folders store (for backward compatibility)
+      if (!database.objectStoreNames.contains(LINKED_FOLDERS_STORE)) {
+        database.createObjectStore(LINKED_FOLDERS_STORE, { keyPath: "id" });
+      }
+
+      // Folder handles store (for local folder handles)
+      if (!database.objectStoreNames.contains(FOLDER_HANDLES_STORE)) {
+        database.createObjectStore(FOLDER_HANDLES_STORE, { keyPath: "id" });
+      }
+    };
+  });
+}
+
+// Generic storage operations
+async function storeData<T>(storeName: string, data: T): Promise<void> {
+  if (!db) await initializeAppDatabase();
+  
+  const transaction = db!.transaction([storeName], "readwrite");
+  const store = transaction.objectStore(storeName);
+  store.put(data);
+
+  return new Promise((resolve, reject) => {
+    transaction.oncomplete = () => resolve();
+    transaction.onerror = () => reject(transaction.error);
+  });
+}
+
+async function getData<T>(storeName: string, key: string): Promise<T | null> {
+  if (!db) await initializeAppDatabase();
+  
+  const transaction = db!.transaction([storeName], "readonly");
+  const store = transaction.objectStore(storeName);
+  const request = store.get(key);
+
+  return new Promise((resolve, reject) => {
+    request.onsuccess = () => resolve(request.result || null);
+    request.onerror = () => reject(request.error);
+  });
+}
+
+async function getAllData<T>(storeName: string): Promise<T[]> {
+  if (!db) await initializeAppDatabase();
+  
+  const transaction = db!.transaction([storeName], "readonly");
+  const store = transaction.objectStore(storeName);
+  const request = store.getAll();
+
+  return new Promise((resolve, reject) => {
+    request.onsuccess = () => resolve(request.result || []);
+    request.onerror = () => reject(request.error);
+  });
+}
+
+async function deleteData(storeName: string, key: string): Promise<void> {
+  if (!db) await initializeAppDatabase();
+  
+  const transaction = db!.transaction([storeName], "readwrite");
+  const store = transaction.objectStore(storeName);
+  store.delete(key);
+
+  return new Promise((resolve, reject) => {
+    transaction.oncomplete = () => resolve();
+    transaction.onerror = () => reject(transaction.error);
+  });
+}
+
+// Image storage operations
+export async function saveImage(image: ImageData): Promise<void> {
+  const storedImage: StoredImageData = {
+    ...image,
+    dateAdded: image.dateAdded.toISOString(),
+    lastViewed: new Date().toISOString(),
+  };
+  return storeData(IMAGES_STORE, storedImage);
+}
+
+export async function saveImages(images: ImageData[]): Promise<void> {
+  if (!db) await initializeAppDatabase();
+  
+  const transaction = db!.transaction([IMAGES_STORE], "readwrite");
+  const store = transaction.objectStore(IMAGES_STORE);
+  
+  images.forEach(image => {
+    const storedImage: StoredImageData = {
+      ...image,
+      dateAdded: image.dateAdded.toISOString(),
+      lastViewed: new Date().toISOString(),
+    };
+    store.put(storedImage);
+  });
+
+  return new Promise((resolve, reject) => {
+    transaction.oncomplete = () => resolve();
+    transaction.onerror = () => reject(transaction.error);
+  });
+}
+
+export async function loadImages(): Promise<ImageData[]> {
+  const storedImages = await getAllData<StoredImageData>(IMAGES_STORE);
+  return storedImages.map(stored => ({
+    ...stored,
+    dateAdded: new Date(stored.dateAdded),
+  }));
+}
+
+export async function deleteImage(imageId: string): Promise<void> {
+  return deleteData(IMAGES_STORE, imageId);
+}
+
+// Folder storage operations
+export async function saveFolder(folder: FolderData, folderType: 'local' | 'google_drive' | 'custom' = 'custom', metadata?: any): Promise<void> {
+  const storedFolder: StoredFolderData = {
+    ...folder,
+    dateCreated: new Date().toISOString(),
+    lastViewed: new Date().toISOString(),
+    folderType,
+    metadata,
+  };
+  return storeData(FOLDERS_STORE, storedFolder);
+}
+
+export async function loadFolders(): Promise<FolderData[]> {
+  const storedFolders = await getAllData<StoredFolderData>(FOLDERS_STORE);
+  return storedFolders.map(stored => ({
+    id: stored.id,
+    name: stored.name,
+    images: stored.images,
+    userDefined: stored.userDefined,
+  }));
+}
+
+export async function deleteFolder(folderId: string): Promise<void> {
+  return deleteData(FOLDERS_STORE, folderId);
+}
+
+// Tag variants storage
+export async function saveTagVariants(tagVariants: TagVariant[]): Promise<void> {
+  if (!db) await initializeAppDatabase();
+  
+  const transaction = db!.transaction([TAG_VARIANTS_STORE], "readwrite");
+  const store = transaction.objectStore(TAG_VARIANTS_STORE);
+  
+  // Clear existing tag variants
+  store.clear();
+  
+  // Add new ones
+  tagVariants.forEach(variant => {
+    store.put(variant);
+  });
+
+  return new Promise((resolve, reject) => {
+    transaction.oncomplete = () => resolve();
+    transaction.onerror = () => reject(transaction.error);
+  });
+}
+
+export async function loadTagVariants(): Promise<TagVariant[]> {
+  return getAllData<TagVariant>(TAG_VARIANTS_STORE);
+}
+
+// Session data storage
+export async function saveSessionData(sessionData: {
+  selectedFolder: string | null;
+  searchQuery: string;
+  selectedTags: string[];
+  sortField: string;
+  sortDirection: string;
+}): Promise<void> {
+  return storeData(SESSION_STORE, { key: "lastSession", ...sessionData });
+}
+
+export async function loadSessionData(): Promise<any> {
+  return getData(SESSION_STORE, "lastSession");
+}
+
+// User preferences storage
+export async function saveUserPreferences(preferences: {
+  theme?: string;
+  defaultView?: string;
+  autoSave?: boolean;
+}): Promise<void> {
+  const existing = await loadUserPreferences();
+  const updated = { ...existing, ...preferences };
+  return storeData(PREFERENCES_STORE, { key: "userPreferences", ...updated });
+}
+
+export async function loadUserPreferences(): Promise<any> {
+  const data = await getData(PREFERENCES_STORE, "userPreferences");
+  return data || {
+    theme: "light",
+    defaultView: "grid",
+    autoSave: true,
+  };
+}
+
+// Full app data operations
+export async function saveAppData(appData: {
+  images: ImageData[];
+  folders: FolderData[];
+  tagVariants: TagVariant[];
+  sessionData?: any;
+}): Promise<void> {
+  await Promise.all([
+    saveImages(appData.images),
+    Promise.all(appData.folders.map(folder => saveFolder(folder))),
+    saveTagVariants(appData.tagVariants),
+    appData.sessionData ? saveSessionData(appData.sessionData) : Promise.resolve(),
+  ]);
+}
+
+export async function loadAppData(): Promise<{
+  images: ImageData[];
+  folders: FolderData[];
+  tagVariants: TagVariant[];
+  sessionData: any;
+  userPreferences: any;
+}> {
+  const [images, folders, tagVariants, sessionData, userPreferences] = await Promise.all([
+    loadImages(),
+    loadFolders(),
+    loadTagVariants(),
+    loadSessionData(),
+    loadUserPreferences(),
+  ]);
+
+  return {
+    images,
+    folders,
+    tagVariants,
+    sessionData,
+    userPreferences,
+  };
+}
+
+// Clear all app data (for reset functionality)
+export async function clearAllAppData(): Promise<void> {
+  if (!db) await initializeAppDatabase();
+  
+  const storeNames = [IMAGES_STORE, FOLDERS_STORE, TAG_VARIANTS_STORE, SESSION_STORE, PREFERENCES_STORE];
+  const transaction = db!.transaction(storeNames, "readwrite");
+  
+  storeNames.forEach(storeName => {
+    transaction.objectStore(storeName).clear();
+  });
+
+  return new Promise((resolve, reject) => {
+    transaction.oncomplete = () => resolve();
+    transaction.onerror = () => reject(transaction.error);
+  });
+}
+
+// Auto-save functionality
+let autoSaveTimeout: NodeJS.Timeout | null = null;
+
+export function scheduleAutoSave(saveFunction: () => void, delay: number = 2000): void {
+  if (autoSaveTimeout) {
+    clearTimeout(autoSaveTimeout);
+  }
+  
+  autoSaveTimeout = setTimeout(() => {
+    saveFunction();
+    autoSaveTimeout = null;
+  }, delay);
+}
+
+// Export database instance for backward compatibility
+export { db, initializeAppDatabase as initializeDatabase };
