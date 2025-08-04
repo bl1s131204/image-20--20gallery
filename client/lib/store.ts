@@ -16,7 +16,11 @@ import {
   loadAppData,
   saveSessionData,
   scheduleAutoSave,
+  loadUserAppData,
+  saveUserImage,
+  saveUserFolder,
 } from "./storageManager";
+import { useAuthStore } from "./authStore";
 
 interface AppState {
   // Images and folders
@@ -57,8 +61,13 @@ interface AppState {
   // Persistence
   saveToStorage: () => Promise<void>;
   loadFromStorage: () => Promise<void>;
+  loadUserData: (userId: string) => Promise<void>;
   isLoaded: boolean;
   setLoaded: (loaded: boolean) => void;
+
+  // Privacy management
+  toggleImagePrivacy: (imageId: string, isPrivate: boolean) => void;
+  toggleFolderPrivacy: (folderId: string, isPrivate: boolean) => void;
 }
 
 // Mock image data for demonstration - empty by default
@@ -81,6 +90,7 @@ export const useAppStore = create<AppState>()((set, get) => ({
 
   // Actions
   addImages: (files: File[]) => {
+    const authUser = useAuthStore.getState().user;
     const newImages: ImageData[] = files.map((file, index) => {
       const imageId = Date.now().toString() + index;
       const { title, rawTags, processedTags } = processImageTags(
@@ -109,6 +119,13 @@ export const useAppStore = create<AppState>()((set, get) => ({
     }));
 
     get().refreshTagVariants();
+
+    // Save images with user ownership if authenticated
+    if (authUser) {
+      newImages.forEach(image => {
+        saveUserImage(image, authUser.id, false); // Default to public
+      });
+    }
 
     // Auto-save after adding images
     scheduleAutoSave(() => get().saveToStorage());
@@ -147,6 +164,7 @@ export const useAppStore = create<AppState>()((set, get) => ({
   },
 
   createFolder: (name: string) => {
+    const authUser = useAuthStore.getState().user;
     const newFolder: FolderData = {
       id: Date.now().toString(),
       name,
@@ -157,6 +175,11 @@ export const useAppStore = create<AppState>()((set, get) => ({
     set((state) => ({
       folders: [...state.folders, newFolder],
     }));
+
+    // Save folder with user ownership if authenticated
+    if (authUser) {
+      saveUserFolder(newFolder, authUser.id, false, 'custom');
+    }
 
     // Auto-save after creating folder
     scheduleAutoSave(() => get().saveToStorage());
@@ -353,6 +376,64 @@ export const useAppStore = create<AppState>()((set, get) => ({
 
   setLoaded: (loaded: boolean) => {
     set({ isLoaded: loaded });
+  },
+
+  loadUserData: async (userId: string) => {
+    try {
+      await initializeAppDatabase();
+      const data = await loadUserAppData(userId);
+
+      set({
+        images: data.images,
+        folders: data.folders,
+        tagVariants: data.tagVariants,
+        selectedFolder: data.sessionData?.selectedFolder || null,
+        searchQuery: data.sessionData?.searchQuery || "",
+        selectedTags: data.sessionData?.selectedTags || [],
+        sortField: (data.sessionData?.sortField as SortField) || "relevance",
+        sortDirection: (data.sessionData?.sortDirection as SortDirection) || "desc",
+        isLoaded: true,
+      });
+
+      console.log("User data loaded:", {
+        images: data.images.length,
+        folders: data.folders.length,
+        tagVariants: data.tagVariants.length,
+      });
+    } catch (error) {
+      console.error("Failed to load user data:", error);
+      set({ isLoaded: true }); // Set loaded even if failed to prevent blocking UI
+    }
+  },
+
+  toggleImagePrivacy: (imageId: string, isPrivate: boolean) => {
+    set((state) => ({
+      images: state.images.map((img) =>
+        img.id === imageId ? { ...img, isPrivate } : img
+      ),
+    }));
+
+    // Update in storage
+    import("./storageManager").then(({ toggleImagePrivacy }) => {
+      toggleImagePrivacy(imageId, isPrivate);
+    });
+
+    scheduleAutoSave(() => get().saveToStorage());
+  },
+
+  toggleFolderPrivacy: (folderId: string, isPrivate: boolean) => {
+    set((state) => ({
+      folders: state.folders.map((folder) =>
+        folder.id === folderId ? { ...folder, isPrivate } : folder
+      ),
+    }));
+
+    // Update in storage
+    import("./storageManager").then(({ toggleFolderPrivacy }) => {
+      toggleFolderPrivacy(folderId, isPrivate);
+    });
+
+    scheduleAutoSave(() => get().saveToStorage());
   },
 }));
 
