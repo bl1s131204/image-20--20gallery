@@ -599,6 +599,35 @@ export function LinkedFolders() {
         </AlertDialogContent>
       </AlertDialog>
 
+      {/* Iframe Warning Modal */}
+      <AlertDialog open={showIframeWarning} onOpenChange={setShowIframeWarning}>
+        <AlertDialogContent className="max-w-md">
+          <AlertDialogHeader>
+            <div className="flex items-center gap-2">
+              <AlertTriangle className="h-5 w-5 text-amber-500" />
+              <AlertDialogTitle>File Access Restricted</AlertDialogTitle>
+            </div>
+            <AlertDialogDescription className="text-left">
+              File access features are disabled when the app is embedded (iframe mode).
+              This is a browser security restriction to protect your files.
+              <br /><br />
+              Please open this app in a new browser tab to enable folder access and file picking features.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="flex-col sm:flex-row gap-2">
+            <AlertDialogCancel>Stay Here</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                window.open(window.location.href, '_blank');
+                setShowIframeWarning(false);
+              }}
+              className="bg-primary hover:bg-primary/90"
+            >
+              Open in New Tab
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
     </div>
   );
