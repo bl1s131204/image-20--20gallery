@@ -35,6 +35,7 @@ interface ImageCardProps {
   image: ImageData;
   onView: (image: ImageData) => void;
   onFullscreen: (image: ImageData) => void;
+  onEdit: (image: ImageData) => void;
 }
 
 function ImageCard({ image, onView, onFullscreen }: ImageCardProps) {
