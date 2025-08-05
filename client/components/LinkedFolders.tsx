@@ -899,7 +899,7 @@ export function LinkedFolders() {
               }}
               className="bg-primary hover:bg-primary/90 w-full sm:w-auto"
             >
-              Open in New Tab
+              New Tab
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
