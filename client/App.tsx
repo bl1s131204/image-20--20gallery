@@ -13,6 +13,7 @@ import { TagsSidebar } from "./components/TagsSidebar";
 import { ImageGrid } from "./components/ImageGrid";
 import { initializeAppData, useAppStore } from "./lib/store";
 import { useAuthStore } from "./lib/authStore";
+import { autoRepairDatabase } from "./lib/databaseRepair";
 
 import { useEffect } from "react";
 import Index from "./pages/Index";
