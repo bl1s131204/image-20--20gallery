@@ -510,7 +510,7 @@ function FullScreenImageViewer({
           src={image.url}
           alt={image.title || image.name}
           className="w-full h-full object-contain"
-          style={{ maxWidth: "95vw", maxHeight: "95vh" }}
+          style={{ maxWidth: "100vw\", maxHeight: \"100vh\" \"100vh\"\"100vh" }}
         />
 
         {/* Image Loading Overlay */}
