@@ -12,7 +12,7 @@ import { FilterSidebar } from "./components/FilterSidebar";
 import { TagsSidebar } from "./components/TagsSidebar";
 import { ImageGrid } from "./components/ImageGrid";
 import { initializeAppData, useAppStore } from "./lib/store";
-import { useUserStore } from "./lib/userStore\"; \"./lib/userStore\";e";
+import { useUserStore } from "./lib/userStore\";om \"./lib/userStore";
 import { autoRepairDatabase } from "./lib/databaseRepair";
 
 import { useEffect } from "react";
