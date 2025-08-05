@@ -56,9 +56,10 @@ export function LoginGate() {
             </Button>
 
             <div className="text-xs text-muted-foreground bg-muted/50 p-3 rounded-md">
-              <p className="font-medium mb-1">Access Instructions:</p>
-              <p>Use User ID: <span className="font-mono font-bold">1312yoga</span></p>
-              <p>No password required</p>
+              <p className="font-medium mb-1">Getting Started:</p>
+              <p>• Create a new account with any username</p>
+              <p>• Login with existing username</p>
+              <p>• Use Guest mode for temporary access</p>
             </div>
           </CardContent>
         </Card>
