@@ -257,25 +257,7 @@ export function UserProfile() {
                   )}
                 </div>
 
-                <div>
-                  <Label htmlFor="email">Email</Label>
-                  {isEditing ? (
-                    <Input
-                      id="email"
-                      type="email"
-                      value={editForm.email}
-                      onChange={(e) => setEditForm(prev => ({
-                        ...prev,
-                        email: e.target.value
-                      }))}
-                      placeholder="Enter your email"
-                    />
-                  ) : (
-                    <p className="text-sm py-2 px-3 bg-muted rounded-md">
-                      {user.email}
-                    </p>
-                  )}
-                </div>
+
 
                 <div>
                   <Label>Username</Label>
