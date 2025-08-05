@@ -38,7 +38,7 @@ import { toast } from "./ui/use-toast";
 
 export function UserProfile() {
   const { theme } = useTheme();
-  const { user, logout, updateUser } = useAuthStore();
+  const { user, logout, updateUser } = useUserStore();
   const [showSettings, setShowSettings] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editForm, setEditForm] = useState({
