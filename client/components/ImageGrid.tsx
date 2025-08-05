@@ -509,7 +509,7 @@ function FullScreenImageViewer({
         <img
           src={image.url}
           alt={image.title || image.name}
-          className="max-w-full max-h-full object-contain"
+          className="w-full h-full object-contain"
           style={{ maxWidth: "95vw", maxHeight: "95vh" }}
         />
 
