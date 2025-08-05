@@ -20,7 +20,7 @@ import {
   saveUserImage,
   saveUserFolder,
 } from "./storageManager";
-import { useUserStore } from "./userStore\";rStore\";ore\";tore";
+import { useUserStore } from "./userStore";
 
 interface AppState {
   // Images and folders
