@@ -44,7 +44,7 @@ export interface StoredAppData {
 
 // Database configuration
 const DB_NAME = "TagEngineAppData";
-const DB_VERSION = 3;
+const DB_VERSION = 4;
 const IMAGES_STORE = "images";
 const FOLDERS_STORE = "folders";
 const TAG_VARIANTS_STORE = "tagVariants";
@@ -69,24 +69,46 @@ export async function initializeAppDatabase(): Promise<void> {
 
     request.onupgradeneeded = (event) => {
       const database = (event.target as IDBOpenDBRequest).result;
+      const transaction = (event.target as IDBOpenDBRequest).transaction!;
+
+      // Helper function to safely create index
+      const createIndexSafely = (store: IDBObjectStore, indexName: string, keyPath: string, options?: IDBIndexParameters) => {
+        if (!store.indexNames.contains(indexName)) {
+          try {
+            store.createIndex(indexName, keyPath, options);
+          } catch (error) {
+            console.warn(`Failed to create index ${indexName}:`, error);
+          }
+        }
+      };
 
       // Images store
+      let imageStore: IDBObjectStore;
       if (!database.objectStoreNames.contains(IMAGES_STORE)) {
-        const imageStore = database.createObjectStore(IMAGES_STORE, { keyPath: "id" });
-        imageStore.createIndex("folderId", "folder", { unique: false });
-        imageStore.createIndex("dateAdded", "dateAdded", { unique: false });
-        imageStore.createIndex("userId", "userId", { unique: false });
-        imageStore.createIndex("isPrivate", "isPrivate", { unique: false });
+        imageStore = database.createObjectStore(IMAGES_STORE, { keyPath: "id" });
+      } else {
+        imageStore = transaction.objectStore(IMAGES_STORE);
       }
 
+      // Ensure all indices exist
+      createIndexSafely(imageStore, "folderId", "folder", { unique: false });
+      createIndexSafely(imageStore, "dateAdded", "dateAdded", { unique: false });
+      createIndexSafely(imageStore, "userId", "userId", { unique: false });
+      createIndexSafely(imageStore, "isPrivate", "isPrivate", { unique: false });
+
       // Folders store
+      let folderStore: IDBObjectStore;
       if (!database.objectStoreNames.contains(FOLDERS_STORE)) {
-        const folderStore = database.createObjectStore(FOLDERS_STORE, { keyPath: "id" });
-        folderStore.createIndex("folderType", "folderType", { unique: false });
-        folderStore.createIndex("dateCreated", "dateCreated", { unique: false });
-        folderStore.createIndex("userId", "userId", { unique: false });
-        folderStore.createIndex("isPrivate", "isPrivate", { unique: false });
+        folderStore = database.createObjectStore(FOLDERS_STORE, { keyPath: "id" });
+      } else {
+        folderStore = transaction.objectStore(FOLDERS_STORE);
       }
+
+      // Ensure all indices exist
+      createIndexSafely(folderStore, "folderType", "folderType", { unique: false });
+      createIndexSafely(folderStore, "dateCreated", "dateCreated", { unique: false });
+      createIndexSafely(folderStore, "userId", "userId", { unique: false });
+      createIndexSafely(folderStore, "isPrivate", "isPrivate", { unique: false });
 
       // Tag variants store
       if (!database.objectStoreNames.contains(TAG_VARIANTS_STORE)) {
@@ -378,55 +400,93 @@ export function scheduleAutoSave(saveFunction: () => void, delay: number = 2000)
 export async function getUserImages(userId: string, includePrivate: boolean = true): Promise<ImageData[]> {
   if (!db) await initializeAppDatabase();
 
-  const transaction = db!.transaction([IMAGES_STORE], "readonly");
-  const store = transaction.objectStore(IMAGES_STORE);
-  const index = store.index("userId");
-  const request = index.getAll(userId);
+  try {
+    const transaction = db!.transaction([IMAGES_STORE], "readonly");
+    const store = transaction.objectStore(IMAGES_STORE);
 
-  return new Promise((resolve, reject) => {
-    request.onsuccess = () => {
-      const storedImages: StoredImageData[] = request.result || [];
-      const filteredImages = includePrivate
-        ? storedImages
-        : storedImages.filter(img => !img.isPrivate);
+    // Try to use the userId index, fall back to scanning all records if index doesn't exist
+    let request: IDBRequest;
+    try {
+      const index = store.index("userId");
+      request = index.getAll(userId);
+    } catch (indexError) {
+      console.warn("userId index not found, scanning all records");
+      request = store.getAll();
+    }
 
-      const images = filteredImages.map(stored => ({
-        ...stored,
-        dateAdded: new Date(stored.dateAdded),
-      }));
+    return new Promise((resolve, reject) => {
+      request.onsuccess = () => {
+        let storedImages: StoredImageData[] = request.result || [];
 
-      resolve(images);
-    };
-    request.onerror = () => reject(request.error);
-  });
+        // If we had to scan all records, filter by userId
+        if (!store.indexNames.contains("userId")) {
+          storedImages = storedImages.filter(img => img.userId === userId);
+        }
+
+        const filteredImages = includePrivate
+          ? storedImages
+          : storedImages.filter(img => !img.isPrivate);
+
+        const images = filteredImages.map(stored => ({
+          ...stored,
+          dateAdded: new Date(stored.dateAdded),
+        }));
+
+        resolve(images);
+      };
+      request.onerror = () => reject(request.error);
+    });
+  } catch (error) {
+    console.error("Error in getUserImages:", error);
+    return []; // Return empty array on error
+  }
 }
 
 export async function getUserFolders(userId: string, includePrivate: boolean = true): Promise<FolderData[]> {
   if (!db) await initializeAppDatabase();
 
-  const transaction = db!.transaction([FOLDERS_STORE], "readonly");
-  const store = transaction.objectStore(FOLDERS_STORE);
-  const index = store.index("userId");
-  const request = index.getAll(userId);
+  try {
+    const transaction = db!.transaction([FOLDERS_STORE], "readonly");
+    const store = transaction.objectStore(FOLDERS_STORE);
 
-  return new Promise((resolve, reject) => {
-    request.onsuccess = () => {
-      const storedFolders: StoredFolderData[] = request.result || [];
-      const filteredFolders = includePrivate
-        ? storedFolders
-        : storedFolders.filter(folder => !folder.isPrivate);
+    // Try to use the userId index, fall back to scanning all records if index doesn't exist
+    let request: IDBRequest;
+    try {
+      const index = store.index("userId");
+      request = index.getAll(userId);
+    } catch (indexError) {
+      console.warn("userId index not found in folders, scanning all records");
+      request = store.getAll();
+    }
 
-      const folders = filteredFolders.map(stored => ({
-        id: stored.id,
-        name: stored.name,
-        images: stored.images,
-        userDefined: stored.userDefined,
-      }));
+    return new Promise((resolve, reject) => {
+      request.onsuccess = () => {
+        let storedFolders: StoredFolderData[] = request.result || [];
 
-      resolve(folders);
-    };
-    request.onerror = () => reject(request.error);
-  });
+        // If we had to scan all records, filter by userId
+        if (!store.indexNames.contains("userId")) {
+          storedFolders = storedFolders.filter(folder => folder.userId === userId);
+        }
+
+        const filteredFolders = includePrivate
+          ? storedFolders
+          : storedFolders.filter(folder => !folder.isPrivate);
+
+        const folders = filteredFolders.map(stored => ({
+          id: stored.id,
+          name: stored.name,
+          images: stored.images,
+          userDefined: stored.userDefined,
+        }));
+
+        resolve(folders);
+      };
+      request.onerror = () => reject(request.error);
+    });
+  } catch (error) {
+    console.error("Error in getUserFolders:", error);
+    return []; // Return empty array on error
+  }
 }
 
 export async function saveUserFolder(folder: FolderData, userId: string, isPrivate: boolean = false, folderType: 'local' | 'google_drive' | 'custom' = 'custom', metadata?: any): Promise<void> {
