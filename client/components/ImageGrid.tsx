@@ -38,7 +38,7 @@ interface ImageCardProps {
   onEdit: (image: ImageData) => void;
 }
 
-function ImageCard({ image, onView, onFullscreen }: ImageCardProps) {
+function ImageCard({ image, onView, onFullscreen, onEdit }: ImageCardProps) {
   const { theme } = useTheme();
   const { removeImage, folders, addImageToFolder } = useAppStore();
   const [isHovered, setIsHovered] = useState(false);
