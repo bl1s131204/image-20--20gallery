@@ -956,6 +956,16 @@ export function LinkedFolders() {
         </DialogContent>
       </Dialog>
 
+      {/* Hidden file input for fallback upload */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        multiple
+        style={{ display: 'none' }}
+        onChange={handleFileInput}
+      />
+
     </div>
   );
 }
