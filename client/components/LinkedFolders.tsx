@@ -883,7 +883,7 @@ export function LinkedFolders() {
               <br />• Open this app in a new tab for full folder access
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <AlertDialogFooter className="flex-col sm:flex-row gap-2">
+          <AlertDialogFooter className="flex flex-col gap-2 sm:flex-row sm:justify-end">
             <AlertDialogCancel>OK, Got It</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleFallbackUpload}
