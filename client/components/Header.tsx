@@ -226,7 +226,7 @@ export function Header() {
       </div>
 
       {/* Authentication Modal */}
-      <AuthModal
+      <UserAuthModal
         isOpen={showAuthModal}
         onOpenChange={setShowAuthModal}
         defaultMode="login"
