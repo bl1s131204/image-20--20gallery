@@ -11,6 +11,7 @@ import {
   Maximize,
   ChevronLeft,
   ChevronRight,
+  Edit,
 } from "lucide-react";
 import { useAppStore } from "@/lib/store";
 import { useTheme } from "./ThemeProvider";
