@@ -884,7 +884,13 @@ export function LinkedFolders() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="flex-col sm:flex-row gap-2">
-            <AlertDialogCancel>Stay Here</AlertDialogCancel>
+            <AlertDialogCancel>OK, Got It</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleFallbackUpload}
+              variant="outline"
+            >
+              Upload Files Instead
+            </AlertDialogAction>
             <AlertDialogAction
               onClick={() => {
                 window.open(window.location.href, '_blank');
