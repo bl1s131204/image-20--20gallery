@@ -868,7 +868,7 @@ export function LinkedFolders() {
 
       {/* Iframe Warning Modal */}
       <AlertDialog open={showIframeWarning} onOpenChange={setShowIframeWarning}>
-        <AlertDialogContent className="max-w-md">
+        <AlertDialogContent className="max-w-sm sm:max-w-md w-[90vw] mx-auto">
           <AlertDialogHeader>
             <div className="flex items-center gap-2">
               <AlertTriangle className="h-5 w-5 text-amber-500" />
