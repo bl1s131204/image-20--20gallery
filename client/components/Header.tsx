@@ -17,7 +17,7 @@ import { GoogleDriveImport } from "./GoogleDriveImport";
 import { DataManager } from "./DataManager";
 import { UserAuthModal } from "./UserAuthModal";
 import { UserProfile } from "./UserProfile";
-import { useUserStore } from "@/lib/userStore\";userStore";
+import { useUserStore } from "@/lib/userStore";
 import {
   linkLocalFolder,
   isFileSystemAccessSupported,
