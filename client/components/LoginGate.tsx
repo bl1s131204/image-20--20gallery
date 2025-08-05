@@ -87,8 +87,8 @@ export function LoginGate() {
       </div>
 
       {/* Authentication Modal */}
-      <AuthModal 
-        isOpen={showAuthModal} 
+      <UserAuthModal
+        isOpen={showAuthModal}
         onOpenChange={setShowAuthModal}
         defaultMode="login"
       />
