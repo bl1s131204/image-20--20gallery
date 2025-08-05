@@ -57,6 +57,11 @@ function AppContent() {
     );
   }
 
+  // Show login screen if not authenticated
+  if (!isAuthenticated) {
+    return <LoginGate />;
+  }
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       <Header />
