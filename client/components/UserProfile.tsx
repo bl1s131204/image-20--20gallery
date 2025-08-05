@@ -43,7 +43,6 @@ export function UserProfile() {
   const [isEditing, setIsEditing] = useState(false);
   const [editForm, setEditForm] = useState({
     displayName: user?.displayName || "",
-    email: user?.email || "",
   });
 
   if (!user) return null;
