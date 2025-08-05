@@ -90,7 +90,7 @@ export const useAppStore = create<AppState>()((set, get) => ({
 
   // Actions
   addImages: (files: File[]) => {
-    const authUser = useAuthStore.getState().user;
+    const currentUser = useUserStore.getState().user;
     const newImages: ImageData[] = files.map((file, index) => {
       const imageId = Date.now().toString() + index;
       const { title, rawTags, processedTags } = processImageTags(
@@ -121,9 +121,9 @@ export const useAppStore = create<AppState>()((set, get) => ({
     get().refreshTagVariants();
 
     // Save images with user ownership if authenticated
-    if (authUser) {
+    if (currentUser && !currentUser.isGuest) {
       newImages.forEach(image => {
-        saveUserImage(image, authUser.id, false); // Default to public
+        saveUserImage(image, currentUser.id, false); // Default to public
       });
     }
 
@@ -164,7 +164,7 @@ export const useAppStore = create<AppState>()((set, get) => ({
   },
 
   createFolder: (name: string) => {
-    const authUser = useAuthStore.getState().user;
+    const currentUser = useUserStore.getState().user;
     const newFolder: FolderData = {
       id: Date.now().toString(),
       name,
@@ -177,8 +177,8 @@ export const useAppStore = create<AppState>()((set, get) => ({
     }));
 
     // Save folder with user ownership if authenticated
-    if (authUser) {
-      saveUserFolder(newFolder, authUser.id, false, 'custom');
+    if (currentUser && !currentUser.isGuest) {
+      saveUserFolder(newFolder, currentUser.id, false, 'custom');
     }
 
     // Auto-save after creating folder
