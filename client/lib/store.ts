@@ -384,9 +384,9 @@ export const useAppStore = create<AppState>()((set, get) => ({
       const data = await loadUserAppData(userId);
 
       set({
-        images: data.images,
-        folders: data.folders,
-        tagVariants: data.tagVariants,
+        images: data.images || [],
+        folders: data.folders || [],
+        tagVariants: data.tagVariants || [],
         selectedFolder: data.sessionData?.selectedFolder || null,
         searchQuery: data.sessionData?.searchQuery || "",
         selectedTags: data.sessionData?.selectedTags || [],
@@ -395,14 +395,33 @@ export const useAppStore = create<AppState>()((set, get) => ({
         isLoaded: true,
       });
 
-      console.log("User data loaded:", {
-        images: data.images.length,
-        folders: data.folders.length,
-        tagVariants: data.tagVariants.length,
+      console.log("User data loaded successfully:", {
+        images: data.images?.length || 0,
+        folders: data.folders?.length || 0,
+        tagVariants: data.tagVariants?.length || 0,
       });
     } catch (error) {
       console.error("Failed to load user data:", error);
-      set({ isLoaded: true }); // Set loaded even if failed to prevent blocking UI
+
+      // Initialize with empty data but set as loaded to prevent blocking
+      set({
+        images: [],
+        folders: [],
+        tagVariants: [],
+        selectedFolder: null,
+        searchQuery: "",
+        selectedTags: [],
+        sortField: "relevance",
+        sortDirection: "desc",
+        isLoaded: true,
+      });
+
+      // Try to initialize with fallback data
+      try {
+        await initializeAppData();
+      } catch (fallbackError) {
+        console.error("Fallback initialization also failed:", fallbackError);
+      }
     }
   },
 
