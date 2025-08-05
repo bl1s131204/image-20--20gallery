@@ -144,6 +144,11 @@ export function UserProfile() {
               <div>
                 <p className="font-medium">{user.displayName}</p>
                 <p className="text-xs text-muted-foreground">@{user.username}</p>
+                {user.isGuest && (
+                  <Badge variant="secondary" className="text-xs mt-1">
+                    Guest Session
+                  </Badge>
+                )}
               </div>
             </div>
           </DropdownMenuLabel>
