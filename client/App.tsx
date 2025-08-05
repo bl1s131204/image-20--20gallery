@@ -18,6 +18,7 @@ import { useEffect } from "react";
 import Index from "./pages/Index";
 import FolderSelection from "./pages/FolderSelection";
 import NotFound from "./pages/NotFound";
+import { LoginGate } from "./components/LoginGate";
 
 const queryClient = new QueryClient();
 
