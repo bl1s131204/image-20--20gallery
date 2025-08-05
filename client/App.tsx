@@ -30,7 +30,11 @@ function AppContent() {
   useEffect(() => {
     const initApp = async () => {
       try {
-
+        // Check and repair database if needed
+        const dbHealthy = await autoRepairDatabase();
+        if (!dbHealthy) {
+          console.warn("Database repair failed, some features may not work correctly");
+        }
 
         // Check authentication session first
         await checkSession();
