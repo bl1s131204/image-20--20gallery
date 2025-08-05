@@ -308,7 +308,7 @@ export function ImageGrid() {
         className="hidden"
       />
 
-      {/* Full Screen Image Viewer */}
+      {/* Image Info Viewer */}
       {fullscreenImage && (
         <ImageInfoViewer
           image={fullscreenImage}
