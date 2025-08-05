@@ -651,7 +651,7 @@ function FullScreenImageViewer({
       >
         <div>Use ← → keys or click arrows to navigate</div>
         <div>Press ESC or click outside to close</div>
-        <div>Hold Shift/Ctrl + Click image for full screen</div>
+        <div>Click image to open Info mode</div>
       </div>
     </div>
   );
