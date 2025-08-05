@@ -37,17 +37,17 @@ export function isFileSystemAccessSupported(): boolean {
     return false;
   }
 
-  // Must not be in an iframe (security restriction)
-  if (isInIframe()) {
-    return false;
-  }
-
-  // Must be in a secure context
-  if (!window.isSecureContext) {
+  // Check secure context but be more permissive
+  if (!window.isSecureContext && location.protocol !== 'http:') {
     return false;
   }
 
   return true;
+}
+
+// Check if we're likely in an iframe (for warning purposes only)
+export function isLikelyInIframe(): boolean {
+  return isInIframe();
 }
 
 // Get specific reason why File System Access is not supported
