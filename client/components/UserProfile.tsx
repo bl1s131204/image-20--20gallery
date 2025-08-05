@@ -67,7 +67,6 @@ export function UserProfile() {
 
     updateUser({
       displayName: editForm.displayName.trim(),
-      email: editForm.email.trim(),
     });
 
     setIsEditing(false);
