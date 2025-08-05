@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { LogIn, Shield, Lock } from "lucide-react";
-import { AuthModal } from "./AuthModal";
+import { UserAuthModal } from "./UserAuthModal";
 import { Button } from "./ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 
