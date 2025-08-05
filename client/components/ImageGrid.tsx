@@ -201,6 +201,7 @@ export function ImageGrid() {
   const [fullscreenImage, setFullscreenImage] = useState<ImageData | null>(
     null,
   );
+  const [editingImage, setEditingImage] = useState<ImageData | null>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
