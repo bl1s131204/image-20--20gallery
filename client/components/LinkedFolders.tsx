@@ -854,10 +854,12 @@ export function LinkedFolders() {
               <AlertDialogTitle>File Access Restricted</AlertDialogTitle>
             </div>
             <AlertDialogDescription className="text-left">
-              File access features are disabled when the app is embedded (iframe mode).
-              This is a browser security restriction to protect your files.
+              Browser security prevents direct folder access in embedded environments.
               <br /><br />
-              Please open this app in a new browser tab to enable folder access and file picking features.
+              <strong>Alternative options:</strong>
+              <br />• Use drag-and-drop to add images directly
+              <br />• Click "Add Images" to upload individual files
+              <br />• Open this app in a new tab for full folder access
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="flex-col sm:flex-row gap-2">
