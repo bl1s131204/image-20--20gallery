@@ -162,12 +162,23 @@ export function LinkedFolders() {
       }
     } catch (error) {
       console.error("Failed to link folder:", error);
-      toast({
-        title: "Error",
-        description:
-          error instanceof Error ? error.message : "Failed to link folder",
-        variant: "destructive",
-      });
+
+      // Check if it's a specific iframe security error
+      if (error instanceof Error && (
+        error.message.includes('must be handling a user gesture') ||
+        error.message.includes('not allowed') ||
+        error.name === 'SecurityError'
+      )) {
+        // Show iframe warning for specific security errors
+        setShowIframeWarning(true);
+      } else {
+        toast({
+          title: "Error",
+          description:
+            error instanceof Error ? error.message : "Failed to link folder",
+          variant: "destructive",
+        });
+      }
     } finally {
       setIsLoading(false);
     }
