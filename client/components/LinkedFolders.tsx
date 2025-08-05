@@ -287,6 +287,26 @@ export function LinkedFolders() {
     setShowDeleteDialog(true);
   };
 
+  const handleFileInput = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(event.target.files || []);
+    if (files.length > 0) {
+      addImages(files);
+      toast({
+        title: "Images Added",
+        description: `Added ${files.length} images to your gallery`,
+      });
+    }
+    // Reset the input
+    if (event.target) {
+      event.target.value = '';
+    }
+  };
+
+  const handleFallbackUpload = () => {
+    setShowIframeWarning(false);
+    fileInputRef.current?.click();
+  };
+
   const handleTogglePrivacy = async (folder: LinkedFolder) => {
     try {
       const updatedFolders = linkedFolders.map(f =>
