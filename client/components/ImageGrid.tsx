@@ -310,7 +310,7 @@ export function ImageGrid() {
 
       {/* Full Screen Image Viewer */}
       {fullscreenImage && (
-        <FullScreenImageViewer
+        <ImageInfoViewer
           image={fullscreenImage}
           images={images}
           currentIndex={currentImageIndex}
