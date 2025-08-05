@@ -30,7 +30,7 @@ import {
 } from "./ui/dropdown-menu";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
 import { ImageEditor } from "./ImageEditor";
-import { ImageInfoViewer } from "./ImageInfoViewer\";ImageInfoViewer";
+import { ImageInfoViewer } from "./ImageInfoViewer";
 
 interface ImageCardProps {
   image: ImageData;
