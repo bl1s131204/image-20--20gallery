@@ -897,7 +897,7 @@ export function LinkedFolders() {
                 window.open(window.location.href, '_blank');
                 setShowIframeWarning(false);
               }}
-              className="bg-primary hover:bg-primary/90"
+              className="bg-primary hover:bg-primary/90 w-full sm:w-auto"
             >
               Open in New Tab
             </AlertDialogAction>
