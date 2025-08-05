@@ -884,7 +884,7 @@ export function LinkedFolders() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="flex flex-col gap-2 sm:flex-row sm:justify-end">
-            <AlertDialogCancel>OK, Got It</AlertDialogCancel>
+            <AlertDialogCancel className="w-full sm:w-auto">OK, Got It</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleFallbackUpload}
               variant="outline"
