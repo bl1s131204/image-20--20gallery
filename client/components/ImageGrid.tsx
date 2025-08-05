@@ -539,14 +539,30 @@ function FullScreenImageViewer({
               </div>
             </div>
 
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={onClose}
-              className="text-white hover:bg-white/20 h-8 w-8 p-0"
-            >
-              <X className="h-5 w-5" />
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  const link = document.createElement('a');
+                  link.href = image.url;
+                  link.download = image.name;
+                  link.click();
+                }}
+                className="text-white hover:bg-white/20 h-8 w-8 p-0"
+                title="Download image"
+              >
+                <Download className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={onClose}
+                className="text-white hover:bg-white/20 h-8 w-8 p-0"
+              >
+                <X className="h-5 w-5" />
+              </Button>
+            </div>
           </div>
         </div>
 
