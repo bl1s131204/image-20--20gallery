@@ -459,38 +459,54 @@ export const useAppStore = create<AppState>()((set, get) => ({
 // Initialize app data from storage
 export async function initializeAppData() {
   const store = useAppStore.getState();
+  const userStore = useUserStore.getState();
 
   if (!store.isLoaded) {
-    await store.loadFromStorage();
+    // If user is authenticated, load their specific data
+    if (userStore.isAuthenticated && userStore.user) {
+      await store.loadUserData(userStore.user.id);
+    } else {
+      // Load general data for unauthenticated state
+      await store.loadFromStorage();
+    }
   }
 
-  // If no data was loaded (fresh install), initialize with mock data
+  // For guest users, don't create persistent mock data
+  // For regular users, if no data exists, initialize with empty data
   if (store.images.length === 0 && store.folders.length === 0) {
-    const mockImages = createMockImages();
-    const mockFolders = createMockFolders();
+    if (userStore.user?.isGuest) {
+      // For guests, create temporary mock data in memory only
+      const mockImages = createMockImages();
+      const mockFolders = createMockFolders();
 
-    // Process tags for mock images
-    const processedImages = mockImages.map((img) => {
-      const folderName = mockFolders.find((f) => f.id === img.folder)?.name;
-      const { title, rawTags, processedTags } = processImageTags(
-        img.name,
-        folderName,
-        undefined,
-        undefined,
-        img.id,
-      );
-      return { ...img, title, rawTags, tags: processedTags };
-    });
+      // Process tags for mock images
+      const processedImages = mockImages.map((img) => {
+        const folderName = mockFolders.find((f) => f.id === img.folder)?.name;
+        const { title, rawTags, processedTags } = processImageTags(
+          img.name,
+          folderName,
+          undefined,
+          undefined,
+          img.id,
+        );
+        return { ...img, title, rawTags, tags: processedTags };
+      });
 
-    useAppStore.setState({
-      images: processedImages,
-      folders: mockFolders,
-    });
+      useAppStore.setState({
+        images: processedImages,
+        folders: mockFolders,
+      });
 
-    store.refreshTagVariants();
-
-    // Save the initial data
-    await store.saveToStorage();
+      store.refreshTagVariants();
+      // Don't save mock data for guests
+    } else {
+      // For regular users, just set empty state
+      useAppStore.setState({
+        images: [],
+        folders: [],
+      });
+      store.refreshTagVariants();
+    }
   }
 }
 
