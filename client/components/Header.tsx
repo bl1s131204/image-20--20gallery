@@ -48,7 +48,7 @@ export function Header() {
     addImages,
     loadUserData,
   } = useAppStore();
-  const { user, isAuthenticated } = useAuthStore();
+  const { user, isAuthenticated } = useUserStore();
 
   const [searchFocused, setSearchFocused] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
