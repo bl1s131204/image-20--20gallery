@@ -98,27 +98,16 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container mx-auto px-4">
-        <div className="flex h-16 items-center gap-4">
-          {/* Logo */}
-          <div className="flex items-center gap-4">
+      <div className="w-full px-2 sm:px-4">
+        <div className="flex h-14 items-center justify-between gap-2">
+          {/* Logo - Compact */}
+          <div className="flex items-center gap-2 flex-shrink-0">
             <Link to="/" className="flex items-center gap-2">
-              <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
-                <span className="text-primary-foreground font-bold text-sm">
-                  TG
-                </span>
+              <div className="h-7 w-7 rounded-lg bg-primary flex items-center justify-center">
+                <span className="text-primary-foreground font-bold text-xs">TG</span>
               </div>
-              <h1 className="font-bold text-lg hidden sm:block">TagEngine</h1>
+              <h1 className="font-bold text-base hidden lg:block">TagEngine</h1>
             </Link>
-
-            <nav className="hidden md:flex items-center gap-4">
-              <Link to="/folders">
-                <Button variant="ghost" size="sm">
-                  <Grid className="h-4 w-4 mr-2" />
-                  Folders
-                </Button>
-              </Link>
-            </nav>
           </div>
 
           {/* Search Bar */}
@@ -152,129 +141,77 @@ export function Header() {
             </div>
           </div>
 
-          {/* Action Buttons */}
-          <div className="flex items-center gap-2">
-            {/* Filter Toggle */}
+          {/* Action Buttons - Compact and Responsive */}
+          <div className="flex items-center gap-1 flex-shrink-0">
+            {/* Primary Actions - Always Visible */}
             <Button
               variant={showFilters ? "default" : "outline"}
               size="sm"
               onClick={toggleFilters}
-              className={`transition-all duration-200 ${
-                theme === "neon" && showFilters ? "animate-glow" : ""
-              }`}
+              className={`h-8 px-2 ${theme === "neon" && showFilters ? "animate-glow" : ""}`}
             >
-              <Filter className="h-4 w-4" />
-              <span className="hidden sm:inline ml-2">Filters</span>
+              <Filter className="h-3 w-3" />
               {selectedTags.length > 0 && (
-                <Badge variant="secondary" className="ml-2 h-5 w-5 p-0 text-xs">
+                <Badge variant="secondary" className="ml-1 h-4 w-4 p-0 text-xs">
                   {selectedTags.length}
                 </Badge>
               )}
             </Button>
 
-            {/* Folder Selector */}
+            {/* Compact Menu for Secondary Actions */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm">
-                  <Grid className="h-4 w-4" />
-                  <span className="hidden sm:inline ml-2">
-                    {selectedFolder
-                      ? folders.find((f) => f.id === selectedFolder)?.name ||
-                        "Folder"
-                      : "All Folders"}
-                  </span>
+                <Button variant="outline" size="sm" className="h-8 px-2">
+                  <Grid className="h-3 w-3" />
+                  <span className="hidden md:inline ml-1 text-xs">More</span>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-48">
+                {/* Folder Selection */}
                 <DropdownMenuItem onClick={() => setSelectedFolder(null)}>
                   <Grid className="h-4 w-4 mr-2" />
-                  All Folders
+                  All Folders ({folders.length})
                 </DropdownMenuItem>
-                {folders.map((folder) => (
+                {folders.slice(0, 3).map((folder) => (
                   <DropdownMenuItem
                     key={folder.id}
                     onClick={() => setSelectedFolder(folder.id)}
                   >
-                    <span className="w-4 h-4 mr-2 flex-shrink-0">📁</span>
-                    {folder.name}
-                    <Badge variant="secondary" className="ml-auto">
-                      {folder.images.length}
-                    </Badge>
+                    📁 {folder.name} ({folder.images.length})
                   </DropdownMenuItem>
                 ))}
+
+                {/* Theme Options */}
+                <DropdownMenuItem>
+                  <Palette className="h-4 w-4 mr-2" />
+                  Theme: {themes.find(t => t.value === theme)?.label}
+                </DropdownMenuItem>
+
+                {/* Import Options */}
+                <DropdownMenuItem>
+                  <HardDrive className="h-4 w-4 mr-2" />
+                  Link Local Folder
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
 
-            {/* Theme Selector */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm">
-                  <Palette className="h-4 w-4" />
-                  <span className="hidden sm:inline ml-2">Theme</span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-40">
-                {themes.map((themeOption) => (
-                  <DropdownMenuItem
-                    key={themeOption.value}
-                    onClick={() => setTheme(themeOption.value)}
-                    className={theme === themeOption.value ? "bg-accent" : ""}
-                  >
-                    <span className="mr-2">{themeOption.icon}</span>
-                    {themeOption.label}
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
+            {/* Sort Controls - Compact */}
+            <div className="hidden sm:block">
+              <SortControls />
+            </div>
 
-            {/* Sorting Controls */}
-            <SortControls />
+            {/* Add Images - Essential Action */}
+            <Button
+              size="sm"
+              className="h-8 px-2"
+              onClick={() => fileInputRef.current?.click()}
+            >
+              <Plus className="h-3 w-3" />
+              <span className="hidden lg:inline ml-1 text-xs">Add</span>
+            </Button>
 
-            {/* Google Drive Import */}
-            <GoogleDriveImport />
-
-            {/* Data Manager */}
-            <DataManager />
-
-            {/* Link Local Folder Button */}
-            {isFileSystemAccessSupported() && (
-              <Button
-                variant="outline"
-                size="sm"
-                className="hidden md:flex"
-                onClick={handleLinkLocalFolder}
-              >
-                <HardDrive className="h-4 w-4 mr-2" />
-                Link Folder
-              </Button>
-            )}
-
-            {/* Authentication Controls */}
-            {isAuthenticated ? (
-              <>
-                {/* Add Images Button (for authenticated users) */}
-                <Button
-                  size="sm"
-                  className="hidden sm:flex"
-                  onClick={() => fileInputRef.current?.click()}
-                >
-                  <Plus className="h-4 w-4 mr-2" />
-                  Add Images
-                </Button>
-
-                {/* User Profile */}
-                <UserProfile />
-              </>
-            ) : (
-              <Button
-                variant="default"
-                size="sm"
-                onClick={() => setShowAuthModal(true)}
-              >
-                <User className="h-4 w-4 mr-2" />
-                Sign In
-              </Button>
-            )}
+            {/* User Profile - Always Visible */}
+            <UserProfile />
 
             {/* Hidden file input */}
             <input
