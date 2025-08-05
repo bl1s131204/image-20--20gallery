@@ -74,6 +74,7 @@ export function LinkedFolders() {
   const { addImages, images: currentImages, clearImages } = useAppStore();
   const [linkedFolders, setLinkedFolders] = useState<LinkedFolder[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);nt>(null);ement>(null);
   const [selectedFolder, setSelectedFolder] = useState<LinkedFolder | null>(
     null,
   );
