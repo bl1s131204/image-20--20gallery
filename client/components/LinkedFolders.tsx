@@ -890,7 +890,7 @@ export function LinkedFolders() {
               variant="outline"
               className="w-full sm:w-auto"
             >
-              Upload Files Instead
+              Upload Files
             </AlertDialogAction>
             <AlertDialogAction
               onClick={() => {
