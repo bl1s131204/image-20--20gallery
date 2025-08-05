@@ -110,6 +110,10 @@ function ImageCard({ image, onView, onFullscreen, onEdit }: ImageCardProps) {
                 <Maximize className="h-4 w-4 mr-2" />
                 Full Screen
               </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => onEdit(image)}>
+                <Edit className="h-4 w-4 mr-2" />
+                Edit
+              </DropdownMenuItem>
               <DropdownMenuItem>
                 <Download className="h-4 w-4 mr-2" />
                 Download
