@@ -25,7 +25,7 @@ const queryClient = new QueryClient();
 
 function AppContent() {
   const { isLoaded } = useAppStore();
-  const { checkSession, isAuthenticated } = useAuthStore();
+  const { checkSession, isAuthenticated } = useUserStore();
 
   useEffect(() => {
     const initApp = async () => {
