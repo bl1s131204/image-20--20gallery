@@ -116,27 +116,24 @@ export function UserProfile() {
     <>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button
-            variant="ghost"
-            className="flex items-center gap-2 px-3 py-2 h-auto"
-          >
-            <Avatar className="h-8 w-8">
-              <AvatarImage src={user.avatar} alt={user.displayName} />
-              <AvatarFallback className="text-xs">
-                {getInitials(user.displayName)}
-              </AvatarFallback>
-            </Avatar>
-            <div className="hidden sm:block text-left">
-              <p className="text-sm font-medium truncate max-w-[120px]">
-                {user.displayName}
-              </p>
-              <p className="text-xs text-muted-foreground">
-                @{user.username}
-              </p>
-            </div>
-            <ChevronDown className="h-4 w-4 hidden sm:block" />
-          </Button>
-        </DropdownMenuTrigger>
+        <Button
+          variant="ghost"
+          className="flex items-center gap-1 px-2 py-1 h-8"
+        >
+          <Avatar className="h-6 w-6">
+            <AvatarImage src={user.avatar} alt={user.displayName} />
+            <AvatarFallback className="text-xs">
+              {getInitials(user.displayName)}
+            </AvatarFallback>
+          </Avatar>
+          <div className="hidden md:block text-left">
+            <p className="text-xs font-medium truncate max-w-[80px]">
+              {user.displayName}
+            </p>
+          </div>
+          <ChevronDown className="h-3 w-3 hidden md:block" />
+        </Button>
+      </DropdownMenuTrigger>
         
         <DropdownMenuContent align="end" className="w-56">
           <DropdownMenuLabel>
