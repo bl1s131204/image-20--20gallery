@@ -37,7 +37,7 @@ function AppContent() {
         }
 
         // Check authentication session first
-        await checkSession();
+        checkSession();
 
         // Initialize app data (will load user-specific data if authenticated)
         await initializeAppData();
