@@ -29,6 +29,7 @@ import {
   DropdownMenuSeparator,
 } from "./ui/dropdown-menu";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
+import { ImageEditor } from "./ImageEditor";
 
 interface ImageCardProps {
   image: ImageData;
