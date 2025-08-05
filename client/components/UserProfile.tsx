@@ -79,7 +79,6 @@ export function UserProfile() {
   const handleCancelEdit = () => {
     setEditForm({
       displayName: user?.displayName || "",
-      email: user?.email || "",
     });
     setIsEditing(false);
   };
