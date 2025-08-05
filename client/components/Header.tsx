@@ -15,7 +15,7 @@ import { useAppStore } from "@/lib/store";
 import { SortControls } from "./SortControls";
 import { GoogleDriveImport } from "./GoogleDriveImport";
 import { DataManager } from "./DataManager";
-import { AuthModal } from "./AuthModal";
+import { UserAuthModal } from "./UserAuthModal";
 import { UserProfile } from "./UserProfile";
 import { useUserStore } from "@/lib/userStore\";userStore";
 import {
