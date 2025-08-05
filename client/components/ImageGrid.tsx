@@ -63,10 +63,11 @@ function ImageCard({ image, onView, onFullscreen, onEdit }: ImageCardProps) {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onClick={(e) => {
+        // Regular click opens fullscreen info view, modifier keys open detail view
         if (e.shiftKey || e.ctrlKey || e.metaKey) {
-          onFullscreen(image);
-        } else {
           onView(image);
+        } else {
+          onFullscreen(image);
         }
       }}
     >
