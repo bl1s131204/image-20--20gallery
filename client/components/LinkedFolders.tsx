@@ -888,6 +888,7 @@ export function LinkedFolders() {
             <AlertDialogAction
               onClick={handleFallbackUpload}
               variant="outline"
+              className="w-full sm:w-auto"
             >
               Upload Files Instead
             </AlertDialogAction>
