@@ -12,7 +12,7 @@ import {
   Save,
   X,
 } from "lucide-react";
-import { useAuthStore } from "@/lib/authStore";
+import { useUserStore } from "@/lib/userStore";
 import { useTheme } from "./ThemeProvider";
 import { Button } from "./ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
