@@ -56,11 +56,7 @@ export function getFileSystemAccessError(): string {
     return "File System Access API is not supported in this browser. Please use Chrome, Edge, or another Chromium-based browser.";
   }
 
-  if (isInIframe()) {
-    return "File System Access API cannot be used in iframe environments for security reasons. Please open this app in a new tab or window.";
-  }
-
-  if (!window.isSecureContext) {
+  if (!window.isSecureContext && location.protocol !== 'http:') {
     return "File System Access API requires a secure context (HTTPS). Please access this app over HTTPS.";
   }
 
