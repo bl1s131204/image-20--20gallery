@@ -165,6 +165,7 @@ export function LinkedFolders() {
 
       // Check if it's a specific iframe security error
       if (error instanceof Error && (
+        error.message.includes('Cross origin sub frames') ||
         error.message.includes('must be handling a user gesture') ||
         error.message.includes('not allowed') ||
         error.name === 'SecurityError'
