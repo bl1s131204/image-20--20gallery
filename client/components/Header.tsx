@@ -110,29 +110,28 @@ export function Header() {
             </Link>
           </div>
 
-          {/* Search Bar */}
-          <div className="flex-1 max-w-2xl mx-4">
-            <div
-              className={`relative transition-all duration-200 ${
-                searchFocused ? "scale-105" : ""
-              }`}
-            >
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          {/* Search Bar - Compact */}
+          <div className="flex-1 max-w-xs sm:max-w-sm mx-2">
+            <div className="relative">
+              <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-3 w-3 text-muted-foreground" />
               <Input
-                placeholder="Search images, tags, folders..."
+                type="text"
+                placeholder="Search..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onFocus={() => setSearchFocused(true)}
                 onBlur={() => setSearchFocused(false)}
-                className={`pl-10 transition-all duration-200 ${
-                  theme === "neon" ? "shadow-glow" : ""
-                } ${theme === "cyberpunk" ? "border-cyberpunk-pink/50" : ""}`}
+                className={`pl-7 pr-7 h-8 text-sm transition-all duration-200 ${
+                  searchFocused ? "ring-2 ring-primary" : ""
+                } ${theme === "neon" ? "border-neon/30" : ""} ${
+                  theme === "cyberpunk" ? "border-cyberpunk-pink/30" : ""
+                }`}
               />
               {searchQuery && (
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="absolute right-2 top-1/2 -translate-y-1/2 h-6 w-6 p-0"
+                  className="absolute right-1 top-1/2 -translate-y-1/2 h-5 w-5 p-0 text-xs"
                   onClick={() => setSearchQuery("")}
                 >
                   ×
