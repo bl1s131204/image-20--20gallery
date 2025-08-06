@@ -281,12 +281,11 @@ export function ImageInfoViewer({
             variant="ghost"
             size="lg"
             onClick={navigatePrevious}
-            disabled={currentIndex === 0}
             className={`absolute left-4 top-1/2 -translate-y-1/2 pointer-events-auto
-              text-white hover:bg-white/20 h-16 w-16 p-0 disabled:opacity-30 transition-opacity duration-300 ${
+              text-white hover:bg-white/20 h-16 w-16 p-0 transition-opacity duration-300 ${
                 showControls ? "opacity-100" : "opacity-0"
               } ${theme === "neon" ? "hover:shadow-glow" : ""}`}
-            title="Previous image (←)"
+            title="Previous image (←) - loops to last"
           >
             <ChevronLeft className="h-10 w-10" />
           </Button>
@@ -296,12 +295,11 @@ export function ImageInfoViewer({
             variant="ghost"
             size="lg"
             onClick={navigateNext}
-            disabled={currentIndex === images.length - 1}
             className={`absolute right-4 top-1/2 -translate-y-1/2 pointer-events-auto
-              text-white hover:bg-white/20 h-16 w-16 p-0 disabled:opacity-30 transition-opacity duration-300 ${
+              text-white hover:bg-white/20 h-16 w-16 p-0 transition-opacity duration-300 ${
                 showControls ? "opacity-100" : "opacity-0"
               } ${theme === "neon" ? "hover:shadow-glow" : ""}`}
-            title="Next image (→)"
+            title="Next image (→) - loops to first"
           >
             <ChevronRight className="h-10 w-10" />
           </Button>
