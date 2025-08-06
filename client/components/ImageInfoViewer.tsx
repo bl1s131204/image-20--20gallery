@@ -107,17 +107,15 @@ export function ImageInfoViewer({
   }, [currentIndex]);
 
   const navigatePrevious = () => {
-    if (currentIndex > 0) {
-      onNavigate(currentIndex - 1);
-      setZoom(1); // Reset zoom when navigating
-    }
+    const nextIndex = currentIndex === 0 ? images.length - 1 : currentIndex - 1;
+    onNavigate(nextIndex);
+    setZoom(1); // Reset zoom when navigating
   };
 
   const navigateNext = () => {
-    if (currentIndex < images.length - 1) {
-      onNavigate(currentIndex + 1);
-      setZoom(1); // Reset zoom when navigating
-    }
+    const nextIndex = currentIndex === images.length - 1 ? 0 : currentIndex + 1;
+    onNavigate(nextIndex);
+    setZoom(1); // Reset zoom when navigating
   };
 
   const handleMouseMove = () => {
