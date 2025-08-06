@@ -175,8 +175,16 @@ export function ImageInfoViewer({
             transform: `scale(${zoom})`,
             userSelect: "none"
           }}
-          onClick={() => setShowInfo(prev => !prev)}
-          onDoubleClick={handleZoomIn}
+          onClick={(e) => {
+            e.preventDefault();
+            if (e.button === 0) { // Left click
+              navigateNext();
+            }
+          }}
+          onContextMenu={(e) => {
+            e.preventDefault();
+            navigatePrevious();
+          }}
         />
       </div>
 
