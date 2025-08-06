@@ -390,40 +390,6 @@ export function ImageInfoViewer({
         </div>
       )}
 
-      {/* Bottom Thumbnail Strip (only when not showing info) */}
-      {images.length > 1 && !showInfo && (
-        <div
-          className={`absolute bottom-6 left-1/2 -translate-x-1/2 pointer-events-auto transition-opacity duration-300 ${
-            showControls ? "opacity-100" : "opacity-0"
-          }`}
-        >
-          <div className="flex gap-2 bg-black/80 backdrop-blur-sm rounded-lg p-3 max-w-md overflow-x-auto">
-            {images
-              .slice(Math.max(0, currentIndex - 4), currentIndex + 5)
-              .map((img, idx) => {
-                const realIndex = Math.max(0, currentIndex - 4) + idx;
-                return (
-                  <button
-                    key={img.id}
-                    onClick={() => onNavigate(realIndex)}
-                    className={`relative flex-shrink-0 w-16 h-16 rounded overflow-hidden transition-all duration-200 ${
-                      realIndex === currentIndex
-                        ? "ring-2 ring-white scale-110"
-                        : "hover:scale-105 opacity-70 hover:opacity-100"
-                    }`}
-                    title={img.title || img.name}
-                  >
-                    <img
-                      src={img.url}
-                      alt={img.title || img.name}
-                      className="w-full h-full object-cover"
-                    />
-                  </button>
-                );
-              })}
-          </div>
-        </div>
-      )}
     </div>
   );
 }
