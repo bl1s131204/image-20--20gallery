@@ -33,15 +33,16 @@ export function ImageInfoViewer({
 }: ImageInfoViewerProps) {
   const { theme } = useTheme();
   const [showControls, setShowControls] = useState(true);
-  const [hideControlsTimeout, setHideControlsTimeout] = useState<NodeJS.Timeout | null>(null);
+  const [hideControlsTimeout, setHideControlsTimeout] =
+    useState<NodeJS.Timeout | null>(null);
   const [zoom, setZoom] = useState(1);
   const [showInfo, setShowInfo] = useState(false);
 
   // Prevent body scroll when viewer is open
   useEffect(() => {
-    document.body.style.overflow = 'hidden';
+    document.body.style.overflow = "hidden";
     return () => {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = "unset";
     };
   }, []);
 
@@ -65,7 +66,7 @@ export function ImageInfoViewer({
         case "i":
         case "I":
           e.preventDefault();
-          setShowInfo(prev => !prev);
+          setShowInfo((prev) => !prev);
           break;
         case "+":
         case "=":
@@ -128,15 +129,15 @@ export function ImageInfoViewer({
   };
 
   const handleZoomIn = () => {
-    setZoom(prev => Math.min(prev * 1.2, 5));
+    setZoom((prev) => Math.min(prev * 1.2, 5));
   };
 
   const handleZoomOut = () => {
-    setZoom(prev => Math.max(prev / 1.2, 0.1));
+    setZoom((prev) => Math.max(prev / 1.2, 0.1));
   };
 
   const handleDownload = () => {
-    const link = document.createElement('a');
+    const link = document.createElement("a");
     link.href = image.url;
     link.download = image.name;
     link.click();
@@ -168,16 +169,17 @@ export function ImageInfoViewer({
           src={image.url}
           alt={image.title || image.name}
           className="transition-transform duration-300 ease-in-out cursor-grab active:cursor-grabbing"
-          style={{ 
-            maxWidth: "100vw", 
+          style={{
+            maxWidth: "100vw",
             maxHeight: "100vh",
             objectFit: "contain",
             transform: `scale(${zoom})`,
-            userSelect: "none"
+            userSelect: "none",
           }}
           onClick={(e) => {
             e.preventDefault();
-            if (e.button === 0) { // Left click
+            if (e.button === 0) {
+              // Left click
               navigateNext();
             }
           }}
@@ -241,8 +243,8 @@ export function ImageInfoViewer({
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => setShowInfo(prev => !prev)}
-              className={`text-white hover:bg-white/20 h-8 w-8 p-0 ${showInfo ? 'bg-white/20' : ''}`}
+              onClick={() => setShowInfo((prev) => !prev)}
+              className={`text-white hover:bg-white/20 h-8 w-8 p-0 ${showInfo ? "bg-white/20" : ""}`}
               title="Toggle info (I)"
             >
               <Info className="h-4 w-4" />
@@ -330,11 +332,13 @@ export function ImageInfoViewer({
                 </div>
                 {image.size && (
                   <div className="text-white/70">
-                    <span className="text-white">Size:</span> {formatFileSize(image.size)}
+                    <span className="text-white">Size:</span>{" "}
+                    {formatFileSize(image.size)}
                   </div>
                 )}
                 <div className="text-white/70">
-                  <span className="text-white">Added:</span> {image.dateAdded.toLocaleDateString()}
+                  <span className="text-white">Added:</span>{" "}
+                  {image.dateAdded.toLocaleDateString()}
                 </div>
               </div>
             </div>
@@ -363,7 +367,9 @@ export function ImageInfoViewer({
 
             {/* Quick Actions */}
             <div>
-              <h3 className="text-white font-semibold text-lg mb-3">Quick Actions</h3>
+              <h3 className="text-white font-semibold text-lg mb-3">
+                Quick Actions
+              </h3>
               <div className="space-y-2">
                 <Button
                   variant="outline"
@@ -379,7 +385,9 @@ export function ImageInfoViewer({
             {/* Navigation Info */}
             {images.length > 1 && (
               <div>
-                <h3 className="text-white font-semibold text-lg mb-3">Navigation</h3>
+                <h3 className="text-white font-semibold text-lg mb-3">
+                  Navigation
+                </h3>
                 <div className="text-sm text-white/70 space-y-1">
                   <div>• Use ← → arrow keys to navigate</div>
                   <div>• Left-click image: next image</div>
@@ -394,7 +402,6 @@ export function ImageInfoViewer({
           </div>
         </div>
       )}
-
     </div>
   );
 }
