@@ -382,10 +382,11 @@ export function ImageInfoViewer({
                 <h3 className="text-white font-semibold text-lg mb-3">Navigation</h3>
                 <div className="text-sm text-white/70 space-y-1">
                   <div>• Use ← → arrow keys to navigate</div>
+                  <div>• Left-click image: next image</div>
+                  <div>• Right-click image: previous image</div>
                   <div>• Press I to toggle this info panel</div>
                   <div>• Press + / - to zoom in/out</div>
                   <div>• Press 0 to reset zoom</div>
-                  <div>• Double-click image to zoom in</div>
                   <div>• Press Esc to close</div>
                 </div>
               </div>
